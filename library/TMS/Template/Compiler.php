@@ -1,12 +1,6 @@
 <?php
 
 /**
- * General template compiling class. This takes a string (template) and converts it
- * into PHP code. This code represents the full statements.
- *
- * Most methods are public so as to be usable by the tag/function handlers. Externally,
- * {@link compile()} is the primary method to use for basic compilation.
- *
  * @package XenForo_Template
  */
 class TMS_Template_Compiler extends XenForo_Template_Compiler
@@ -28,7 +22,7 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 
 		$mods = XenForo_Model::create('TMS_Model_Modification')->getEffectiveModificationListForStyle($styleId, $conditions);
 
-		$modsData = array();
+		$modsData = array(); // info about current template's modifications and how they applied
 		$parsed = null;
 		$templateOriginal = $this->_text;
 
@@ -36,7 +30,6 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 		if ($templateId && isset(self::$_modificationCache[$cacheRecordKey])) {
 			return self::$_modificationCache[$cacheRecordKey];
 		}
-
 
 		foreach ($mods as $key => $mod)
 		{
@@ -65,10 +58,9 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 							break;
 					}
 				}
-				//die(Zend_Debug::dump($this->_text));
 				$parsed = $this->lexAndParse();
 				$this->setFollowExternal(false);
-				$this->compileParsed($parsed, $title, 0, 0);
+				$this->compileParsed($parsed, $title, 0, 0); // test compilation
 
 				foreach ($mods as $key => $modification)
 				{
@@ -77,6 +69,7 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 			}
 			catch (XenForo_Template_Compiler_Exception $e)
 			{
+				// modifications made template not valid. so ignore them
 				$parsed = null;
 				$this->_text = $templateOriginal;
 			}

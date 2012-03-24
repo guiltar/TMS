@@ -9,11 +9,7 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 {
 
 	/**
-	 * TODO: Export style
-	 */
-
-	/**
-	 * Gets the code event model object.
+	 * Gets the modification model object.
 	 *
 	 * @return TMS_Model_Modification
 	 */

@@ -121,7 +121,7 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 	}
 
 	/**
-	 * Gets the template model.
+	 * Gets the modification model.
 	 *
 	 * @return TMS_Model_Modification
 	 */

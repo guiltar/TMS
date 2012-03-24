@@ -9,7 +9,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 	}
 
 	/**
-	 * Template index. This is a list of templates, so redirect this to a
+	 * Modification index. This is a list of modifications, so redirect this to a
 	 * style-specific list.
 	 *
 	 * @return XenForo_ControllerResponse_Redirect
@@ -249,7 +249,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 	}
 
 	/**
-	 * Gets the template model.
+	 * Gets the modification model.
 	 *
 	 * @return TMS_Model_Modification
 	 */

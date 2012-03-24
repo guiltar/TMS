@@ -8,7 +8,7 @@
 class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 {
 	/**
-	 * Displays the list of templates in the specified style.
+	 * Displays the list of modifications in the specified style.
 	 *
 	 * @return XenForo_ControllerResponse_Abstract
 	 */
@@ -74,6 +74,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 		{
 			return $response;
 		}
+
 		/* @var $response XenForo_ControllerResponse_View */
 
 		$style = $response->params['style'];
@@ -121,7 +122,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 	}
 
 	/**
-	 * Gets the template model.
+	 * Gets the modification model.
 	 *
 	 * @return TMS_Model_Modification
 	 */

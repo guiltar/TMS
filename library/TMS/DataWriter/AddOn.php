@@ -58,7 +58,7 @@ class TMS_DataWriter_AddOn extends XFCP_TMS_DataWriter_AddOn
 
 
 	/**
-	 * Gets the template model.
+	 * Gets the modification model.
 	 *
 	 * @return TMS_Model_Modification
 	 */

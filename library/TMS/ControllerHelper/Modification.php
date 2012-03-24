@@ -66,7 +66,7 @@ class TMS_ControllerHelper_Modification extends XenForo_ControllerHelper_Abstrac
 
 
 	/**
-	 * Gets the template model.
+	 * Gets the modification model.
 	 *
 	 * @return TMS_Model_Modification
 	 */

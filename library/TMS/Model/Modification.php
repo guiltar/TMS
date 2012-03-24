@@ -134,7 +134,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Gets an array of all event listeners, ordered by their event and execution order,
+	 * Gets an array of all modifications, ordered by their title and execution order,
 	 * keyed by modification_id
 	 *
 	 * @return array
@@ -168,7 +168,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Returns the templates specified by template IDs
+	 * Returns the modifications specified by template IDs
 	 *
 	 * @param array $templateIds
 	 *
@@ -187,8 +187,8 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Fetches a template from a particular style based on its title.
-	 * Note that if a version of the requested template does not exist
+	 * Fetches a modification from a particular style based on its title.
+	 * Note that if a version of the requested modification does not exist
 	 * in the specified style, nothing will be returned.
 	 *
 	 * @param string Title
@@ -210,8 +210,8 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Fetches templates from a particular style based on their titles.
-	 * Note that if a version of the requested template does not exist
+	 * Fetches modifications from a particular style based on their titles.
+	 * Note that if a version of the requested modification does not exist
 	 * in the specified style, nothing will be returned for it.
 	 *
 	 * @param array $titles List of titles
@@ -237,7 +237,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Gets all event listeners for the specified add-on in event and execute order.
+	 * Gets all modifications for the specified add-on in ID and execute order.
 	 *
 	 * @param string $addOnId
 	 *
@@ -276,7 +276,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Returns all the templates that belong to the specified add-on.
+	 * Returns all the modifications that belong to the specified add-on.
 	 *
 	 * @param string $addOnId
 	 *
@@ -295,7 +295,7 @@ class TMS_Model_Modification extends XenForo_Model
 
 
 	/**
-	 * Deletes the templates that belong to the specified add-on.
+	 * Deletes the modifications that belong to the specified add-on.
 	 *
 	 * @param string $addOnId
 	 */
@@ -314,7 +314,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Imports the add-on templates XML.
+	 * Imports the add-on modifications XML.
 	 *
 	 * @param SimpleXMLElement $xml XML element pointing to the root of the data
 	 * @param string $addOnId Add-on to import for
@@ -399,7 +399,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Imports templates into a given style. Note that this assumes the style is already empty.
+	 * Imports modifications into a given style. Note that this assumes the style is already empty.
 	 * It does not check for conflicts.
 	 *
 	 * @param SimpleXMLElement $xml
@@ -446,7 +446,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Appends the add-on template XML to a given DOM element.
+	 * Appends the add-on modification XML to a given DOM element.
 	 *
 	 * @param DOMElement $rootNode Node to append all elements to
 	 * @param string $addOnId Add-on ID to be exported
@@ -483,7 +483,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Appends the template XML for templates in the specified style.
+	 * Appends the modification XML for modification in the specified style.
 	 *
 	 * @param DOMElement $rootNode
 	 * @param integer $styleId
@@ -520,7 +520,7 @@ class TMS_Model_Modification extends XenForo_Model
 	}
 
 	/**
-	 * Gets the templates development XML.
+	 * Gets the modifications development XML.
 	 *
 	 * @return DOMDocument
 	 */

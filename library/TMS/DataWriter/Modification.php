@@ -8,10 +8,8 @@
 class TMS_DataWriter_Modification extends XenForo_DataWriter
 {
 	/**
-	 * Option that controls whether a full compile is performed when the template
-	 * is modified. If false, the template is only parsed into segments. Defaults
-	 * to true, but should be set to false for bulk imports; compilation should
-	 * happen in the second pass.
+	 * Option that controls whether a full compile is performed when the modification
+	 * is modified.
 	 *
 	 * @var string
 	 */
@@ -19,11 +17,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 
 	/**
 	 * Option that controls whether a test compile will be performed when setting
-	 * the value of a template. If false, the error will only be detected when a
-	 * full compile is done.
-	 *
-	 * Note that this does not prevent the template from being parsed. That will
-	 * always happen.
+	 * the value of a modification.
 	 *
 	 * @var string
 	 */
@@ -90,9 +84,6 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 		if ($id = $this->_getExistingPrimaryKey($data, 'modification_id')) {
 			return array('tms_modification' => $this->_getModificationModel()->getModificationById($id));
 		}
-		/*else if (!is_array($data)) {
-			return false;
-		}*/
 		else if (isset($data['title'], $data['style_id'])) {
 			$title = $data['title'];
 			$styleId = $data['style_id'];
@@ -140,9 +131,6 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 		return true;
 	}
 
-	/**
-	 * Verifies that the specified title is not a duplicate
-	 */
 	protected function _preSave()
 	{
 		switch ($this->get('modification_type'))
@@ -241,7 +229,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 	}
 
 	/**
-	 * Gets the code event model object.
+	 * Gets the template model object.
 	 *
 	 * @return XenForo_Model_Template
 	 */
@@ -251,7 +239,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 	}
 
 	/**
-	 * Gets the code event model object.
+	 * Gets the modification model object.
 	 *
 	 * @return TMS_Model_Modification
 	 */
