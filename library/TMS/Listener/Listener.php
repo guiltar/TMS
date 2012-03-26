@@ -46,7 +46,7 @@ class TMS_Listener_Listener
 
 			$params = $template->getParams();
 
-			if(!empty($params['modifications']))
+			if(!empty($params['modifications']) || !empty($params['customModifications']))
 			{
 				$modsTemplate = $template->create('tms_modification_list_items', $params)->render();
 				$compareButton = $template->create('tms_compare_button', $params)->render();
