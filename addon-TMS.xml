@@ -78,7 +78,7 @@
 	<xen:textboxunit label="{xen:phrase template}:" name="template_title" value="{$modification.template_title}" type="search" 
                data-textUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}}" data-textTarget="#TemplateTextTarget"
                results="5" inputclass="AutoComplete AcSingle TemplateText" 
-               data-acurl="{xen:adminlink 'templates/search-name', '', 'style_id={$style.style_id}'}" />
+               data-acurl="{xen:adminlink 'templates/search-title', '', 'style_id={$style.style_id}'}" />
 
         <dl class="ctrlUnit">
         <dt>{xen:phrase tms_original_template_text}:</dt>
@@ -118,6 +118,7 @@
 	<input type="hidden" name="title_original" value="{$modification.title}" id="modificationTitleOriginal" />
 
 	<xen:submitunit>
+		<input type="submit" name="savecheck" value="{xen:phrase tms_save_and_check}" accesskey="s" class="button OverlayTrigger" id="saveCheckButton" />
 		<input type="submit" name="saveexit" value="{xen:phrase save_and_exit}" accesskey="e" class="button OverlayTrigger" id="saveExitButton" />
 
 		<input type="button" name="delete" value="{xen:if $style.style_id, {xen:phrase tms_revert_modification}, {xen:phrase tms_delete_modification}}..."
@@ -425,6 +426,7 @@ Callback arguments:
     <phrase title="tms_requires_minimum_xenforo_version" version_id="1" version_string="Beta 1"><![CDATA[Minimum XenForo version required: {version}]]></phrase>
     <phrase title="tms_revert_customizations_to_this_modification" version_id="1" version_string="Beta 1"><![CDATA[Revert the customizations to this template modification]]></phrase>
     <phrase title="tms_revert_modification" version_id="0" version_string=""><![CDATA[Revert Modification]]></phrase>
+    <phrase title="tms_save_and_check" version_id="3" version_string="1.0.2"><![CDATA[Save and Check]]></phrase>
     <phrase title="tms_search_value" version_id="1" version_string="Beta 1"><![CDATA[Search]]></phrase>
     <phrase title="tms_str_replace" version_id="2" version_string="Beta 2"><![CDATA[String Replace]]></phrase>
     <phrase title="tms_style_contains_no_customized_templates_or_modifications_or_properties" version_id="3" version_string="Release Candidate 1.0.1"><![CDATA[This style contains no customized templates or template modifications or style properties.]]></phrase>

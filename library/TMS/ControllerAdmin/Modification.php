@@ -177,6 +177,11 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 
 		$style = $this->_getStyleModel()->getStyleByid($writer->get('style_id'), true);
 
+		if ($this->_input->filterSingle('savecheck', XenForo_Input::STRING)) {
+			$this->_request->setParam('title',$writer->get('template_title'));
+			return $this->responseReroute('XenForo_ControllerAdmin_Template', 'compare');
+		}
+
 		return $this->responseRedirect(
 			XenForo_ControllerResponse_Redirect::SUCCESS,
 			XenForo_Link::buildAdminLink('template-modifications', null, array('style_id' => $style['style_id'])) . $this->getLastHash($writer->get('title'))

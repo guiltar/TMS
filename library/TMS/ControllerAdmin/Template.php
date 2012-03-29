@@ -91,7 +91,7 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 		));
 	}
 
-	public function actionSearchName()
+	public function actionSearchTitle()
 	{
 		$q = $this->_input->filterSingle('q', XenForo_Input::STRING);
 		$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
@@ -114,7 +114,7 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 		);
 
 		return $this->responseView(
-			'TMS_ViewAdmin_Template_SearchName',
+			'TMS_ViewAdmin_Template_SearchTitle',
 			'',
 			$viewParams
 		);

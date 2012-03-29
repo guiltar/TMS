@@ -1,6 +1,6 @@
 <?php
 
-class TMS_ViewAdmin_Template_SearchName extends XenForo_ViewAdmin_Base
+class TMS_ViewAdmin_Template_SearchTitle extends XenForo_ViewAdmin_Base
 {
 	public function renderJson()
 	{
