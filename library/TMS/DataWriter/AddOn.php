@@ -39,9 +39,11 @@ class TMS_DataWriter_AddOn extends XFCP_TMS_DataWriter_AddOn
 			}
 
 			if (XenForo_Application::getOptions()->get('tmsFullCompile')) {
+				$templateModel = $this->_getTemplateModel();
 				// keyed by template_map_id
-				$templates = $this->_getTemplateModel()->getNamedTemplatesInStyleTreeWithChildren($templateTitles);
-				$this->_getTemplateModel()->compileMappedTemplatesInStyleTree(array_keys($templates));
+				$templates = $templateModel->getNamedTemplatesInStyleTreeWithChildren($templateTitles);
+				$compiledMapIds = $templateModel->compileMappedTemplatesInStyleTree(array_keys($templates));
+				$templateModel->compileMappedTemplatesInStyleTree($templateModel->getIncludingTemplateMapIds($compiledMapIds));
 			}
 			else
 			{
