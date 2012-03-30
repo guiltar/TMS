@@ -24,9 +24,9 @@ class TMS_Model_Modification extends XenForo_Model
 
 	public function getEffectiveModificationListForStyle($styleId, array $conditions = array(), $fetchOptions = array())
 	{
-		$whereClause = $this->prepareModificationConditions($conditions, $fetchOptions);
+		$whereClause = $this->prepareModificationConditions($styleId, $conditions, $fetchOptions);
 
-		// select all modifications
+		// select all modifications satisfying conditions
 		$mods = $this->fetchAllKeyed('
    			SELECT modification.*,addon.title AS addonTitle,
    				IF(modification.style_id = 0, \'default\', IF(modification.style_id = ?, \'custom\', \'inherited\')) AS modification_state,
@@ -86,7 +86,7 @@ class TMS_Model_Modification extends XenForo_Model
 		return $effectiveMods;
 	}
 
-	public function prepareModificationConditions(array $conditions, array &$fetchOptions)
+	public function prepareModificationConditions($styleId, array $conditions, array &$fetchOptions)
 	{
 		$db = $this->_getDb();
 		$sqlConditions = array();
@@ -101,6 +101,18 @@ class TMS_Model_Modification extends XenForo_Model
 			}
 		}
 
+		if (!empty($conditions['template']))
+		{
+			if (is_array($conditions['template']))
+			{
+				$sqlConditions[] = 'modification.replace_value LIKE ' . XenForo_Db::quoteLike($conditions['template'][0], $conditions['phrase_text'][1], $db);
+			}
+			else
+			{
+				$sqlConditions[] = 'modification.replace_value LIKE ' . XenForo_Db::quoteLike($conditions['template'], 'lr', $db);
+			}
+		}
+
 		if (!empty($conditions['template_title'])) {
 			if (is_array($conditions['template_title'])) {
 				$sqlConditions[] = 'modification.template_title IN ' . $db->quote($conditions['template_title']);
@@ -112,8 +124,9 @@ class TMS_Model_Modification extends XenForo_Model
 		}
 
 		if (!empty($conditions['modification_state'])) {
-			$stateIf = 'IF(modification.style_id = 0, \'default\', IF(modification.style_id = modification_map.style_id, \'custom\', \'inherited\'))';
-			if (is_array($conditions['modification_state'])) {
+			$stateIf = 'IF(modification.style_id = 0, \'default\', IF(modification.style_id ='.$db->quote($styleId).', \'custom\', \'inherited\'))';
+			if (is_array($conditions['modification_state']))
+			{
 				$sqlConditions[] = $stateIf . ' IN (' . $db->quote($conditions['modification_state']) . ')';
 			}
 			else

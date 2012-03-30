@@ -17,7 +17,7 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 		if ($response instanceof XenForo_ControllerResponse_View && !empty($template['title'])) {
 			/* @var $modHelper TMS_ControllerHelper_Modification*/
 			$modHelper = $this->getHelper('TMS_ControllerHelper_Modification');
-			$response->params = array_merge($response->params, $modHelper->getModifications($inputStyleId, $template['title']));
+			$response->params = array_merge($response->params, $modHelper->getModifications($inputStyleId, array('template_title' => $template['title'])));
 		}
 
 		return $response;
@@ -77,6 +77,64 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 		$containerParams = array('containerTemplate' => 'PAGE_CONTAINER_SIMPLE');
 
 		return $this->responseView('TMS_ViewAdmin_TemplateModification_Compare', 'tms_template_compare', $viewParams, $containerParams);
+	}
+
+	public function actionSearch()
+	{
+		/* @var $response XenForo_ControllerResponse_View */
+		$response = parent::actionSearch();
+
+		if (!$response instanceof XenForo_ControllerResponse_View || !$this->_input->filterSingle('search', XenForo_Input::UINT)) {
+			return $response;
+		}
+
+		$defaultStyleId = (XenForo_Application::debugMode()
+			? 0
+			: XenForo_Application::get('options')->defaultStyleId
+		);
+
+		if ($this->_input->inRequest('style_id'))
+		{
+			$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
+		}
+		else
+		{
+			$styleId = XenForo_Helper_Cookie::getCookie('edit_style_id');
+			if ($styleId === false)
+			{
+				$styleId = $defaultStyleId;
+			}
+		}
+
+		$input = $this->_input->filter(array(
+			'title' => XenForo_Input::STRING,
+			'template' => XenForo_Input::STRING,
+			'template_state' => array(XenForo_Input::STRING, 'array' => true)
+		));
+
+		$conditions = array();
+		if (!empty($input['title']))
+		{
+			$conditions['title'] = $input['title'];
+		}
+		if (!empty($input['template']))
+		{
+			// translate @x searches to "{xen:property x" as that is what is stored
+			$text = preg_replace('/@property\s*(")?([a-z0-9_]*)/i', '{xen:property \\2', $input['template']);
+			$text = preg_replace('/@([a-z0-9_]+)/i', '{xen:property \\1', $text);
+
+			$conditions['template'] = $text;
+		}
+		if ($styleId && !empty($input['template_state']) && count($input['template_state']) < 3)
+		{
+			$conditions['modification_state'] = $input['template_state'];
+		}
+
+		/* @var $modHelper TMS_ControllerHelper_Modification*/
+		$modHelper = $this->getHelper('TMS_ControllerHelper_Modification');
+		$response->params = array_merge($response->params, $modHelper->getModifications($styleId, $conditions));
+
+		return $response;
 	}
 
 	public function actionText()

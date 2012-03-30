@@ -106,6 +106,15 @@ class TMS_Listener_Listener
 				$hidden.'</form>',
 				$content);
 		}
+
+		if ($template instanceof XenForo_Template_Admin && $templateName == 'template_search_results') {
+
+			//$params = $template->getParams();
+
+			$modificationsTemplate = $template->create('tms_modification_list_items', $template->getParams());
+
+			$content .= $modificationsTemplate;
+		}
 	}
 
 }

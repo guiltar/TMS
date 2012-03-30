@@ -8,13 +8,9 @@ class TMS_ControllerHelper_Modification extends XenForo_ControllerHelper_Abstrac
 	 *
 	 * @return array
 	 */
-	public function getModifications($inputStyleId, $templateName = null)
+	public function getModifications($inputStyleId, $conditions = array())
 	{
 		$modifications = array();
-		$conditions = array();
-		if ($templateName) {
-			$conditions['template_title'] = $templateName;
-		}
 
 		foreach ($this->_getModificationModel()->getEffectiveModificationListForStyle($inputStyleId, $conditions) AS $modification)
 		{
