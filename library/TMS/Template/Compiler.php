@@ -70,6 +70,7 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 			catch (XenForo_Template_Compiler_Exception $e)
 			{
 				// modifications made template not valid. so ignore them
+				XenForo_Error::logException($e);
 				$parsed = null;
 				$this->_text = $templateOriginal;
 			}

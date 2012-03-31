@@ -142,6 +142,8 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 			'description' => XenForo_Input::STRING,
 			'execute_order' => XenForo_Input::UINT,
 			'modification_type' => XenForo_Input::STRING,
+			'callback_class' => array(XenForo_Input::STRING),
+			'callback_method' => array(XenForo_Input::STRING),
 			'search_value' => array(XenForo_Input::STRING, 'noTrim' => true),
 			'replace_value' => array(XenForo_Input::STRING, 'noTrim' => true),
 			'addon_id' => XenForo_Input::STRING

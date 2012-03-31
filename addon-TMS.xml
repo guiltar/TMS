@@ -90,7 +90,7 @@
 	<xen:spinboxunit label="{xen:phrase tms_execution_order}:" name="execute_order" value="{xen:if $modification.execute_order, $modification.execute_order, 10}" min="1" size="10" />
 
         <xen:radiounit label="{xen:phrase tms_modification_type}" value="{$modification.modification_type}" name="modification_type">
-	
+
 	  <xen:option label="{xen:phrase tms_str_replace}" value="str_replace" selected="{$modification.modification_type} == 'str_replace' or !{$modification.type}" />
 		
 	  <xen:option label="{xen:phrase tms_preg_replace}" value="preg_replace" selected="{$modification.modification_type} == 'preg_replace'"  />
@@ -118,6 +118,7 @@
 	<input type="hidden" name="title_original" value="{$modification.title}" id="modificationTitleOriginal" />
 
 	<xen:submitunit>
+		<div class="eventDescription baseHtml">{xen:phrase tms_if_final_template_not_valid_all_mods_ignored, 'link={xen:adminlink logs/server-error}'}</div>
 		<input type="submit" name="savecheck" value="{xen:phrase tms_save_and_check}" accesskey="s" class="button OverlayTrigger" id="saveCheckButton" />
 		<input type="submit" name="saveexit" value="{xen:phrase save_and_exit}" accesskey="e" class="button OverlayTrigger" id="saveExitButton" />
 
@@ -395,13 +396,15 @@ This will decrease amount of operations in one step of rebuilding.]]></phrase>
     <phrase title="tms_delete_modification" version_id="0" version_string=""><![CDATA[Delete Modification]]></phrase>
     <phrase title="tms_diff" version_id="0" version_string=""><![CDATA[Diff]]></phrase>
     <phrase title="tms_execution_order" version_id="0" version_string=""><![CDATA[Execution Order]]></phrase>
+    <phrase title="tms_if_final_template_not_valid_all_mods_ignored" version_id="3" version_string="1.0.2"><![CDATA[If final template is not valid all it's modifications are ignored. Check <a href="{link}">Server Error Log</a>.]]></phrase>
     <phrase title="tms_modification" version_id="0" version_string=""><![CDATA[Modification]]></phrase>
     <phrase title="tms_modifications" version_id="1" version_string="Beta 1"><![CDATA[Template Modifications]]></phrase>
-    <phrase title="tms_modification_callback_explanation_html" version_id="2" version_string="Beta 2"><![CDATA[You may optionally specify a PHP callback here in order to make complicated modifications.<br />
-<br />
+    <phrase title="tms_modification_callback_explanation_html" version_id="3" version_string="1.0.2"><![CDATA[You may optionally specify a PHP callback here in order to make complicated modifications.<br /><br />
+Callback signature:
+<blockquote><code>&$templateText, &$applyCount, &$styleId</code></blockquote>
 Callback arguments:
 <ol>
-	<li><code>string &$template</code><br />The template text.</li>
+	<li><code>string &$templateText</code><br />The template text. Designed to be modified.</li>
         <li><code>integer &$applyCount</code><br />The number of applied changes. Using it you can ensure that modification applied correctly.</li>
         <li><code>integer $styleId</code><br />ID of the style for which template is being compiled.</li>
 </ol>
