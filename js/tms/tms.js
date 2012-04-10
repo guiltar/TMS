@@ -1,6 +1,14 @@
 /** @param {jQuery} $ jQuery Object */
 !function($, window, document, _undefined)
 {
+    XenForo.DiffLoader = function($trigger) {
+        if(window.location.hash=='#compare')
+        {
+            this.OverlayLoader = new XenForo.OverlayLoader($trigger, false, {});
+            this.OverlayLoader.load();
+            return false;
+        }
+    };
 
 	XenForo.TemplateText = function($element) { this.__construct($element); };
 	XenForo.TemplateText.prototype =
@@ -70,6 +78,7 @@
 		}
 	};
 
+    XenForo.register('.OverlayTrigger[name=compare]', 'XenForo.DiffLoader');
 	XenForo.register('input.TemplateText', 'XenForo.TemplateText');
 
 }

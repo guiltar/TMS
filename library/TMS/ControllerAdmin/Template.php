@@ -69,7 +69,7 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 
 		$viewParams = array(
 			'preview' => $input['preview'],
-			'compare' => $diff->Render($renderer),
+			'diff' => $diff->Render($renderer),
 			'template' => $template,
 			'style' => $style,
 		);

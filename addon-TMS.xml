@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="TMS" title="Template Modification System" version_string="1.0.2" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Manufacture" install_callback_method="build" uninstall_callback_class="TMS_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="TMS" title="Template Modification System" version_string="1.1.0" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Manufacture" install_callback_method="build" uninstall_callback_class="TMS_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="TemplateModifications" parent_navigation_id="templates" display_order="250" link="template-modifications" admin_permission_id="" debug_only="0" hide_no_children="0"/>
   </admin_navigation>
@@ -119,6 +119,7 @@
 
 	<xen:submitunit>
 		<div class="eventDescription baseHtml">{xen:phrase tms_if_final_template_not_valid_all_mods_ignored, 'link={xen:adminlink logs/server-error}'}</div>
+                <div style="display:none;"><xen:include template="tms_compare_button" /></div>
 		<input type="submit" name="savecheck" value="{xen:phrase tms_save_and_check}" accesskey="s" class="button OverlayTrigger" id="saveCheckButton" />
 		<input type="submit" name="saveexit" value="{xen:phrase save_and_exit}" accesskey="e" class="button OverlayTrigger" id="saveExitButton" />
 
@@ -135,7 +136,7 @@
 <xen:topctrl>
 	<a href="{xen:adminlink 'template-modifications/add', null, 'style_id={$style.style_id}'}" class="button">+ {xen:phrase tms_create_modification}</a>
         <xen:form action="{xen:adminlink 'tools/cache-rebuild'}">
-	   <input class="button primary" type="submit" accesskey="s" value="Rebuild Templates">
+	   <input class="button primary" type="submit" accesskey="s" value="{xen:phrase tms_rebuild_templates}">
 	   <input type="hidden" name="cache" value="Template" />
         </xen:form>
 </xen:topctrl>
@@ -280,12 +281,12 @@
         </xen:if>
 
 	<div class="subHeading">
-		<a href="{xen:adminlink 'templates/edit', $template, 'style_id={$style.style_id}'}">{xen:phrase template_title}: {$template.title}</a>
 		<a href="{xen:adminlink 'styles', $style}">{xen:phrase style}: {$style.title}</a>
+		<a href="{xen:adminlink 'templates/edit', $template, 'style_id={$style.style_id}'}">{xen:phrase template}: {$template.title}</a>	
 	</div>
-        <xen:if is="{$compare}">
+        <xen:if is="{$diff}">
 	<div class="primaryContent">
-		{xen:raw $compare}
+		{xen:raw $diff}
 	</div>
         <xen:else />
         <h1>{xen:phrase tms_no_differences_found}</h1>
@@ -306,13 +307,92 @@ html {
     /*height: 100% !important;*/
 }
 
-.Differences { width: 100%; }
-.Differences td { padding: 3px; font-size: 0.8em; }
-.Differences th { padding: 3px; text-align: center; font-weight: bold; }
-.Differences del { color: #FF0000; font-weight: bold; }
-.Differences ins { color: #0000FF; font-weight: bold; }
-.Differences .ChangeReplace .Left, .Differences .ChangeDelete .Left { border: 1px dashed #FF0000; }
-.Differences .ChangeReplace .Right, .Differences .ChangeInsert .Right { border: 1px dashed #0000FF; }
+.sectionMain .primaryContent
+{
+	border-color: {xen:property primaryLighter};
+	padding: 0;
+}
+
+.Differences { color: {xen:property faintTextColor}; width: 100%; }
+.Differences td
+{
+	border: 1px solid transparent;
+	border-bottom: 1px solid {xen:property primaryLightest};
+	border-right-color: {xen:property primaryLighterStill};
+	padding: 3px;
+	font-size: 0.8em;
+	width:50%;
+	/*white-space: pre;*/
+}
+.Differences th
+{
+	color: {xen:property primaryDark};
+	border: 1px solid transparent;
+	border-bottom: 1px solid {xen:property primaryLightest};
+	border-right-color: {xen:property primaryLighterStill};
+	padding: 3px;
+	text-align: center;
+	font-weight: bold;
+}
+.Differences th:first-of-type
+{
+	border-left: 1px solid {xen:property primaryLighterStill};
+}
+
+body .Differences del
+{
+	color: #E11129;
+}
+
+body .Differences ins
+{
+	color: {xen:property primaryMedium};
+}
+
+body .Differences .ChangeReplace .Left,
+body .Differences .ChangeDelete .Left,
+body .Differences .ChangeReplace .Right,
+body .Differences .ChangeInsert .Right
+{
+	color: {xen:property dimmedTextColor};
+	border-bottom-color: {xen:property primaryLighter};
+}
+
+body .Differences .ChangeDelete .Left
+{
+	color: {xen:property secondaryMedium};
+	background: {xen:property secondaryLightest};
+	border-bottom-color: {xen:property secondaryLighter};
+}
+
+body .Differences .ChangeReplace .Left,
+body .Differences .ChangeReplace .Right
+{
+	background: {xen:property primaryLighterStill};
+	border-bottom-color: {xen:property primaryLighter};
+}
+
+body .Differences .ChangeReplace .Right
+{
+	/*color: #397C18;*/
+}
+
+body .Differences .ChangeInsert .Right
+{
+	background: #D9FCDC;
+	border-bottom-color: #A3DCA6;
+}
+
+body .Differences thead th:first-of-type,
+body .Differences tfoot th:first-of-type
+{
+	border-right: none;
+}
+body .Differences thead th:last-of-type,
+body .Differences tfoot th:last-of-type
+{
+	border-left: none;
+}
 
 .sectionMain h1
 {
@@ -321,26 +401,25 @@ html {
         margin:50px;
 }
 
-.xenOverlay.compare{
-    width: 90%;
-}
-.xenOverlay.compare .primaryContent{
-    height: 600px;
-    overflow:scroll;
+.xenOverlay.compare { width: 90%; }
 
+.xenOverlay.compare .sectionMain
+{
 }
 
-.xenOverlay.compare > .sectionMain {
-    background-color: #FFFFFF;
+.xenOverlay.compare .primaryContent
+{
+	height: 600px;
+	overflow: auto;
 }
 
-.subHeading a {
-    margin-right: 50px;
-}]]></template>
+.xenOverlay.compare> .sectionMain {background-color: #FFFFFF;}
+
+.subHeading a {margin-right: 50px;}]]></template>
     <template title="tms_tools"><![CDATA[<xen:title>{xen:phrase tms_tools}</xen:title>
 
 <xen:form action="{xen:adminlink 'tools/cache-rebuild'}">
-	<h2 class="subHeading">{xen:phrase rebuild_templates}</h2>
+	<h2 class="subHeading">{xen:phrase tms_rebuild_templates}</h2>
 	
 	<xen:submitunit save="{xen:phrase rebuild_now}" />
 	<input type="hidden" name="cache" value="Template" />
@@ -386,7 +465,6 @@ If the option is disabled you need to rebuild templates to see changes.]]></phra
     <phrase title="option_tmsSafeRebuild" version_id="2" version_string="Beta 2"><![CDATA[Careful Rebuild]]></phrase>
     <phrase title="option_tmsSafeRebuild_explain" version_id="2" version_string="Beta 2"><![CDATA[Use it only if you have errors while rebuilding.<br/>
 This will decrease amount of operations in one step of rebuilding.]]></phrase>
-    <phrase title="rebuild_templates" version_id="0" version_string=""><![CDATA[Rebuild Templates]]></phrase>
     <phrase title="tms_applied_x_times" version_id="2" version_string="Beta 2"><![CDATA[Applied {count} times]]></phrase>
     <phrase title="tms_compare_original_and_final_versions" version_id="0" version_string=""><![CDATA[Compare Original and Final Versions]]></phrase>
     <phrase title="tms_confirm_deletion_of_modification" version_id="0" version_string=""><![CDATA[Confirm Deletion of Modification]]></phrase>
@@ -424,6 +502,7 @@ Callback arguments:
     <phrase title="tms_please_enter_valid_search_string" version_id="1" version_string="Beta 1"><![CDATA[Please enter valid search string.]]></phrase>
     <phrase title="tms_preg_replace" version_id="2" version_string="Beta 2"><![CDATA[Preg Replace]]></phrase>
     <phrase title="tms_rebuild_needed" version_id="2" version_string="Beta 2"><![CDATA[Rebuild Needed]]></phrase>
+    <phrase title="tms_rebuild_templates" version_id="3" version_string="1.0.2"><![CDATA[Rebuild Templates]]></phrase>
     <phrase title="tms_replace_value" version_id="1" version_string="Beta 1"><![CDATA[Replace]]></phrase>
     <phrase title="tms_requested_modification_not_found" version_id="1" version_string="Beta 1"><![CDATA[The requested template modification could not be found.]]></phrase>
     <phrase title="tms_requires_minimum_xenforo_version" version_id="1" version_string="Beta 1"><![CDATA[Minimum XenForo version required: {version}]]></phrase>

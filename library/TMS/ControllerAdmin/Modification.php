@@ -51,7 +51,10 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 			$modification['style_id'] = $inputStyleId;
 		}
 
+		$templateTitle = isset($modification['template_title']) ? $modification['template_title'] : '';
+
 		$viewParams = array(
+			'template' => $this->_getTemplateModel()->getEffectiveTemplateByTitle($templateTitle, $inputStyleId),
 			'modification' => $modification,
 			'style' => $this->_getStyleModel()->getStyleById($inputStyleId, true),
 			'masterStyle' => $styleModel->showMasterStyle() ? $styleModel->getStyleById(0, true) : array(),
@@ -179,9 +182,20 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 
 		$style = $this->_getStyleModel()->getStyleByid($writer->get('style_id'), true);
 
-		if ($this->_input->filterSingle('savecheck', XenForo_Input::STRING)) {
-			$this->_request->setParam('title',$writer->get('template_title'));
-			return $this->responseReroute('XenForo_ControllerAdmin_Template', 'compare');
+		if ($this->_input->filterSingle('savecheck', XenForo_Input::STRING))
+		{
+			if($writer->isInsert())
+			{
+				return $this->responseRedirect(
+					XenForo_ControllerResponse_Redirect::RESOURCE_UPDATED,
+					XenForo_Link::buildAdminLink('template-modifications/edit', $writer->getMergedData(), array('style_id' => $writer->get('style_id'))).'#compare'
+				);
+			}
+			else
+			{
+				$this->_request->setParam('title',$writer->get('template_title'));
+				return $this->responseReroute('XenForo_ControllerAdmin_Template', 'compare');
+			}
 		}
 
 		return $this->responseRedirect(
