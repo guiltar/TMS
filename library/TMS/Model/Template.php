@@ -12,6 +12,24 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 	public static $modifyTemplate = false;
 	public static $fetchFinalTemplate = false;
 
+	public function getAllTemplatesInStyle($styleId, $basicData = false)
+	{
+		$templates = parent::getAllTemplatesInStyle($styleId, $basicData);
+
+		if(XenForo_Application::isRegistered('tmsIndependentExport')){
+			$templateTitles = array();
+			foreach($templates as $template) $templateTitles[] = $template['title'];
+
+			$modifications = $this->_getModificationModel()->getAllModificationsInStyle($styleId);
+			foreach($modifications as $modification) $templateTitles[] = $modification['template_title'];
+
+			$templates = $this->getEffectiveTemplatesByTitles($templateTitles, $styleId);
+			foreach($templates as &$template) $template['template'] = $template['template_final'];
+		}
+
+		return $templates;
+	}
+
 	/**
 	 * Gets the effective template in a style by its title. This includes all
 	 * template information and the map ID.
@@ -184,6 +202,16 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 	protected function _getStyleModel()
 	{
 		return $this->getModelFromCache('XenForo_Model_Style');
+	}
+
+	/**
+	 * Gets the modification model object.
+	 *
+	 * @return TMS_Model_Modification
+	 */
+	protected function _getModificationModel()
+	{
+		return $this->getModelFromCache('TMS_Model_Modification');
 	}
 
 	public function fetchAllKeyed($sql, $key, $bind = array())

@@ -72,6 +72,10 @@ class TMS_Listener_Listener
 				'#(<a.*?)/templates(".*?>).*?(</a>)#',
 				'$0$1/template-modifications$2'.new XenForo_Phrase('tms_modifications').'$3',
 				$content);
+			$content = preg_replace(
+				'#<a href="[^"]*?/export" class="#s',
+				'$0OverlayTrigger ',
+				$content);
 		}
 
 		if ($template instanceof XenForo_Template_Admin && $templateName == 'style_customized_components') {

@@ -7,17 +7,6 @@
  */
 class TMS_Model_Style extends XFCP_TMS_Model_Style
 {
-
-	/**
-	 * Gets the modification model object.
-	 *
-	 * @return TMS_Model_Modification
-	 */
-	protected function _getModificationModel()
-	{
-		return $this->getModelFromCache('TMS_Model_Modification');
-	}
-
 	/**
 	 * Gets the XML representation of a style, including customized templates and properties.
 	 *
@@ -28,10 +17,13 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 	public function getStyleXml(array $style)
 	{
 		$document = parent::getStyleXml($style);
-		$rootNode = $document->documentElement;
 
-		$dataNode = $rootNode->appendChild($document->createElement('template_modifications'));
-		$this->getModelFromCache('TMS_Model_Modification')->appendModificationsStyleXml($dataNode, $style['style_id']);
+		if(!XenForo_Application::isRegistered('tmsIndependentExport'))
+		{
+			$rootNode = $document->documentElement;
+			$dataNode = $rootNode->appendChild($document->createElement('template_modifications'));
+			$this->getModelFromCache('TMS_Model_Modification')->appendModificationsStyleXml($dataNode, $style['style_id']);
+		}
 
 		return $document;
 	}
@@ -75,5 +67,15 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		XenForo_Db::commit($db);
 
 		return $return;
+	}
+
+	/**
+	 * Gets the modification model object.
+	 *
+	 * @return TMS_Model_Modification
+	 */
+	protected function _getModificationModel()
+	{
+		return $this->getModelFromCache('TMS_Model_Modification');
 	}
 }

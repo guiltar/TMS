@@ -7,6 +7,29 @@
  */
 class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 {
+	public function actionExport()
+	{
+		if ($this->_request->isPost())
+		{
+			if(!$this->_input->filterSingle('tms_dependent', XenForo_Input::UINT)){
+				XenForo_Application::set('tmsIndependentExport', 1);
+			}
+
+			return parent::actionExport();
+		}
+		else
+		{
+			$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
+			$style = $this->_getStyleOrError($styleId);
+
+			$viewParams = array(
+				'style' => $style,
+			);
+
+			return $this->responseView('TMS_ViewAdmin_Style_Export', 'tms_style_export', $viewParams);
+		}
+	}
+
 	/**
 	 * Displays the list of modifications in the specified style.
 	 *
