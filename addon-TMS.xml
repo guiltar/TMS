@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="TMS" title="Template Modification System" version_string="1.1.0" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Manufacture" install_callback_method="build" uninstall_callback_class="TMS_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="TMS" title="Template Modification System" version_string="1.1.1" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Manufacture" install_callback_method="build" uninstall_callback_class="TMS_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="TemplateModifications" parent_navigation_id="templates" display_order="250" link="template-modifications" admin_permission_id="" debug_only="0" hide_no_children="0"/>
   </admin_navigation>
@@ -270,6 +270,35 @@
     <a href="{xen:adminlink template-modifications}">{xen:phrase tms_there_modifications_that_may_be_not_applied_rebuild_templates_to_apply}</a>
 </p>
 ]]></template>
+    <template title="tms_style_export"><![CDATA[<xen:title>{xen:phrase tms_exporting_style}: {$style.title}</xen:title>
+<xen:h1>{xen:phrase tms_exporting_style}</xen:h1>
+
+<xen:navigation>
+	<xen:breadcrumb href="{xen:adminlink 'styles/edit', $style}">{$style.title}</xen:breadcrumb>
+</xen:navigation>
+
+<form action="{xen:adminlink 'styles/export'}" method="post" class="xenForm formOverlay deleteConfirmForm">
+
+	<dl class="ctrlUnit">
+		<dt>{xen:phrase tms_export_type}:</dt>
+		<dd>
+			<ul>
+				<li><label for="ctrl_tms_dependent">
+					<input type="radio" name="tms_dependent" id="ctrl_tms_dependent" value="1" checked="checked" /> {xen:phrase tms_complete}</label>
+					<p class="hint">{xen:phrase tms_export_original_templates_and_all_modifications}</p>
+				</li>
+				<li><label for="ctrl_tms_independent">
+					<input type="radio" name="tms_dependent" id="ctrl_tms_independent" value="0" /> {xen:phrase tms_independent}</label>
+					<p class="hint">{xen:phrase tms_export_final_modified_templates}</p></li>
+			</ul>
+		</dd>
+	</dl>
+
+        <input type="hidden" name="style_id" value="{$style.style_id}" />
+
+        <xen:submitunit save="{xen:phrase tms_export_style}" />
+	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
+</form>]]></template>
     <template title="tms_template_compare"><![CDATA[<xen:require css="tms_template_compare.css" />
 <xen:title>{xen:phrase tms_compare_original_and_final_versions}</xen:title>
 
@@ -467,6 +496,7 @@ If the option is disabled you need to rebuild templates to see changes.]]></phra
 This will decrease amount of operations in one step of rebuilding.]]></phrase>
     <phrase title="tms_applied_x_times" version_id="2" version_string="Beta 2"><![CDATA[Applied {count} times]]></phrase>
     <phrase title="tms_compare_original_and_final_versions" version_id="0" version_string=""><![CDATA[Compare Original and Final Versions]]></phrase>
+    <phrase title="tms_complete" version_id="3" version_string="1.1.0"><![CDATA[Complete]]></phrase>
     <phrase title="tms_confirm_deletion_of_modification" version_id="0" version_string=""><![CDATA[Confirm Deletion of Modification]]></phrase>
     <phrase title="tms_confirm_reversion_of_modification" version_id="0" version_string=""><![CDATA[Confirm Reversion of Modification]]></phrase>
     <phrase title="tms_create_modification" version_id="1" version_string="Beta 1"><![CDATA[Create new Template Modification]]></phrase>
@@ -474,7 +504,13 @@ This will decrease amount of operations in one step of rebuilding.]]></phrase>
     <phrase title="tms_delete_modification" version_id="0" version_string=""><![CDATA[Delete Modification]]></phrase>
     <phrase title="tms_diff" version_id="0" version_string=""><![CDATA[Diff]]></phrase>
     <phrase title="tms_execution_order" version_id="0" version_string=""><![CDATA[Execution Order]]></phrase>
+    <phrase title="tms_exporting_style" version_id="3" version_string="1.1.0"><![CDATA[Exporting Style]]></phrase>
+    <phrase title="tms_export_final_modified_templates" version_id="3" version_string="1.1.0"><![CDATA[Export final (modified) templates. This loses info about modifications but works without TMS installed.]]></phrase>
+    <phrase title="tms_export_original_templates_and_all_modifications" version_id="3" version_string="1.1.0"><![CDATA[Export original templates and modifications. This keeps info about modifications but works only if TMS is installed.]]></phrase>
+    <phrase title="tms_export_style" version_id="3" version_string="1.1.0"><![CDATA[Export Style]]></phrase>
+    <phrase title="tms_export_type" version_id="3" version_string="1.1.0"><![CDATA[Export Type]]></phrase>
     <phrase title="tms_if_final_template_not_valid_all_mods_ignored" version_id="3" version_string="1.0.2"><![CDATA[If final template is not valid all it's modifications are ignored. Check <a href="{link}">Server Error Log</a>.]]></phrase>
+    <phrase title="tms_independent" version_id="3" version_string="1.1.0"><![CDATA[TMS-independent]]></phrase>
     <phrase title="tms_modification" version_id="0" version_string=""><![CDATA[Modification]]></phrase>
     <phrase title="tms_modifications" version_id="1" version_string="Beta 1"><![CDATA[Template Modifications]]></phrase>
     <phrase title="tms_modification_callback_explanation_html" version_id="3" version_string="1.0.2"><![CDATA[You may optionally specify a PHP callback here in order to make complicated modifications.<br /><br />
