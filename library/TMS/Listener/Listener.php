@@ -50,8 +50,8 @@ class TMS_Listener_Listener
 			{
 				$modsTemplate = $template->create('tms_modification_list_items', $params)->render();
 				$templateFinal = $template->create('tms_template_edit', $params)->render();
+				$content = preg_replace('#(templateTextarea.*?)(<dl class="ctrlUnit)#s', '$1' . $templateFinal . '$2', $content, 1);
 				$content = $content . $modsTemplate;
-				$content = preg_replace('#<dl class="ctrlUnit">\s*<dt>\s*<label for="ctrl_addon_id">#s',  $templateFinal . '$0', $content);
 			}
 		}
 
