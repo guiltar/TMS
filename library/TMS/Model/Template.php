@@ -60,11 +60,7 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 		}
 		elseif (self::$fetchFinalTemplate)
 		{
-			$template += $this->_getDb()->fetchRow('
-	   			SELECT template_map.template_final, template_map.template_modifications
-	   			FROM xf_template_map AS template_map
-	   			WHERE template_map.title = ? AND template_map.style_id = ?
-	   		', array($title, $styleId));
+			$template += $this->getTemplateFinalByTitle($title, $styleId);
 		}
 		else
 		{
@@ -73,6 +69,15 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 		}
 
 		return $template;
+	}
+
+	public function getTemplateFinalByTitle($title, $styleId)
+	{
+		return $this->_getDb()->fetchRow('
+            SELECT template_map.template_final, template_map.template_modifications
+            FROM xf_template_map AS template_map
+            WHERE template_map.title = ? AND template_map.style_id = ?
+        ', array($title, $styleId));
 	}
 
 	public function getNamedTemplatesInStyleTreeWithChildren(array $titles, $styleId = 0)

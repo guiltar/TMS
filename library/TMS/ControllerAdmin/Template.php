@@ -2,29 +2,31 @@
 
 class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 {
-	/**
-	 * Helper to get the template add/edit form controller response.
-	 *
-	 * @param array $template
-	 * @param integer $inputStyleId The style this template is being edited in
-	 *
-	 * @return XenForo_ControllerResponse_Abstract
-	 */
-	protected function _getTemplateAddEditResponse(array $template, $inputStyleId)
+
+	public function actionEdit()
 	{
 		/* @var $response XenForo_ControllerResponse_View */
-		$response = parent::_getTemplateAddEditResponse($template, $inputStyleId);
-		if ($response instanceof XenForo_ControllerResponse_View && !empty($template['title'])) {
+		$response = parent::actionEdit();
+		if ($response instanceof XenForo_ControllerResponse_View && !empty($response->params['template']))
+		{
+			$template = &$response->params['template'];
+			$inputStyleId = $response->params['style']['style_id'];
+
 			/* @var $modHelper TMS_ControllerHelper_Modification*/
 			$modHelper = $this->getHelper('TMS_ControllerHelper_Modification');
 			$response->params = array_merge($response->params, $modHelper->getModifications($inputStyleId, array('template_title' => $template['title'])));
+
+			$template += $this->_getTemplateModel()->getTemplateFinalByTitle($template['title'], $inputStyleId);
+			$template['template_final'] = $this->_getStylePropertyModel()->replacePropertiesInTemplateForEditor(
+				$template['template_final'], $inputStyleId
+			);
 		}
 
 		return $response;
 	}
 
 
-	public function actionCompare()
+	public function actionDiff()
 	{
 		$input = $this->_input->filter(array(
 			'template_id' => XenForo_Input::UINT,
@@ -66,17 +68,20 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 
 		$diff = new Diff_Compare(explode("\n", $template['template']), explode("\n", $template['template_final']));
 		$renderer = new Diff_Renderer_Html_SideBySide;
+		$diffHtml = $diff->Render($renderer);
+		$diffHtml = str_replace('Old Version</th>', new XenForo_Phrase('tms_original_template').'</th>', $diffHtml);
+		$diffHtml = str_replace('New Version</th>', new XenForo_Phrase('tms_final_template').'</th>', $diffHtml);
 
 		$viewParams = array(
 			'preview' => $input['preview'],
-			'diff' => $diff->Render($renderer),
+			'diff' => $diffHtml,
 			'template' => $template,
 			'style' => $style,
 		);
 
 		$containerParams = array('containerTemplate' => 'PAGE_CONTAINER_SIMPLE');
 
-		return $this->responseView('TMS_ViewAdmin_TemplateModification_Compare', 'tms_template_compare', $viewParams, $containerParams);
+		return $this->responseView('TMS_ViewAdmin_TemplateModification_Diff', 'tms_template_diff', $viewParams, $containerParams);
 	}
 
 	public function actionSearch()
@@ -139,10 +144,24 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 
 	public function actionText()
 	{
+		$templateModel = $this->_getTemplateModel();
+		TMS_Model_Template::$fetchFinalTemplate = true;
+
 		$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
-		$title = $this->_input->filterSingle('template_title', XenForo_Input::STRING);
-		$template = $this->_getTemplateModel()->getEffectiveTemplateByTitle($title, $styleId);
-		$template['template'] = $this->_getStylePropertyModel()->replacePropertiesInTemplateForEditor($template['template'], $styleId);
+		$title = $this->_input->filterSingle('title', XenForo_Input::STRING);
+		$template = $templateModel->getEffectiveTemplateByTitle($title, $styleId);
+
+		if(!$template)
+		{
+			$template['template'] = '';
+			$template['template_final'] = '';
+		}
+		else
+		{
+			$template['template'] = $this->_getStylePropertyModel()->replacePropertiesInTemplateForEditor($template['template'], $styleId);
+			$template['template_final'] = $this->_getStylePropertyModel()->replacePropertiesInTemplateForEditor($template['template_final'], $styleId);
+		}
+
 
 		return $this->responseView('TMS_ViewAdmin_Template_Text', '', array(
 			'template' => $template

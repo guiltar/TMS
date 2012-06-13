@@ -2,7 +2,7 @@
 !function($, window, document, _undefined)
 {
     XenForo.DiffLoader = function($trigger) {
-        if(window.location.hash=='#compare')
+        if(window.location.hash=='#diff')
         {
             this.OverlayLoader = new XenForo.OverlayLoader($trigger, false, {});
             this.OverlayLoader.load();
@@ -16,22 +16,23 @@
 		__construct: function($input)
 		{
 			this.$input = $input;
-			this.url = $input.data('textUrl');
-			this.$target = $($input.data('textTarget'));
-			if (!this.url || !this.$target.length)
-			{
-				return;
-			}
+			this.url = $('.TemplateText').data('templateUrl');
+			this.$originalTemplate = $('#templateOriginal');
+			this.$finalTemplate = $('#templateFinal');
 
-			$input.bind(
+			$('.AutoComplete.TemplateText').bind(
 			{
+				//click: $.context(this, 'fetchTextDelayed'),
 				keyup: $.context(this, 'fetchTextDelayed'),
 				change: $.context(this, 'fetchTextDelayed')
 			});
-			if ($input.val().length)
+
+			$input.bind(
 			{
-				this.fetchText();
-			}
+				click: $.context(this, 'fetchText')
+			});
+
+			this.fetchText();
 		},
 
 		fetchTextDelayed: function()
@@ -46,9 +47,10 @@
 
 		fetchText: function()
 		{
-			if (!this.$input.val().length)
+			if (!$('#templateTitle').val())
 			{
-				this.$target.text('');
+				this.$originalTemplate.text('');
+				this.$finalTemplate.text('');
 				return;
 			}
 
@@ -59,7 +61,7 @@
 
 			this.xhr = XenForo.ajax(
 				this.url,
-				{ template_title: this.$input.val() },
+				{ title: $('#templateTitle').val() },
 				$.context(this, 'ajaxSuccess'),
 				{ error: false }
 			);
@@ -69,16 +71,34 @@
 		{
 			if (ajaxData)
 			{
-				this.$target.text(ajaxData.template);
+				this.$originalTemplate.text(ajaxData.template);
+				this.$finalTemplate.text(ajaxData.template_final);
 			}
 			else
 			{
-				this.$target.text('');
+				this.$originalTemplate.text('');
+				this.$finalTemplate.text('');
 			}
 		}
 	};
 
-    XenForo.register('.OverlayTrigger[name=compare]', 'XenForo.DiffLoader');
+
+
+	XenForo.FinalTemplateToggle = function($form)
+	{
+		var $templateFinal = $form.find('#templateFinal').parent().parent();
+
+		$form.find('input[name=template_final]').click(function(e){
+			$templateFinal.toggle();
+		});
+
+		$form.find('input[name=reload]').click(function(e){
+			$templateFinal.hide();
+		});
+	};
+
+	XenForo.register('form', 'XenForo.FinalTemplateToggle');
+    XenForo.register('.OverlayTrigger[name=diff]', 'XenForo.DiffLoader');
 	XenForo.register('input.TemplateText', 'XenForo.TemplateText');
 
 }

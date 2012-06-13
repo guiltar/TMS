@@ -49,9 +49,9 @@ class TMS_Listener_Listener
 			if(!empty($params['modifications']) || !empty($params['customModifications']))
 			{
 				$modsTemplate = $template->create('tms_modification_list_items', $params)->render();
-				$compareButton = $template->create('tms_compare_button', $params)->render();
+				$templateFinal = $template->create('tms_template_edit', $params)->render();
 				$content = $content . $modsTemplate;
-				$content = preg_replace('#<dl class="ctrlUnit submitUnit">\s*<dt>\s*</dt>\s*<dd>#s', '$0' . $compareButton, $content);
+				$content = preg_replace('#<dl class="ctrlUnit">\s*<dt>\s*<label for="ctrl_addon_id">#s',  $templateFinal . '$0', $content);
 			}
 		}
 

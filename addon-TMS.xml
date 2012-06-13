@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="TMS" title="Template Modification System" version_string="1.1.1" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Manufacture" install_callback_method="build" uninstall_callback_class="TMS_Manufacture" uninstall_callback_method="destroy">
+<addon addon_id="TMS" title="Template Modification System" version_string="1.2" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Manufacture" install_callback_method="build" uninstall_callback_class="TMS_Manufacture" uninstall_callback_method="destroy">
   <admin_navigation>
     <navigation navigation_id="TemplateModifications" parent_navigation_id="templates" display_order="250" link="template-modifications" admin_permission_id="" debug_only="0" hide_no_children="0"/>
   </admin_navigation>
   <admin_permissions/>
   <admin_style_properties/>
   <admin_templates>
-    <template title="tms_compare_button"><![CDATA[<input type="button" name="compare" value="{xen:phrase tms_modified_version}"
-	accesskey="d" class="button OverlayTrigger"
-	data-href="{xen:adminlink templates/compare, null, 'title={$template.title}', 'style_id={$style.style_id}'}" data-cacheOverlay="false"
-/>]]></template>
     <template title="tms_customized_modifications"><![CDATA[<xen:if is="{$modifications}">
 	<li>
 		<h3 class="textHeading"><a href="{xen:adminlink styles/template-modifications, $style}" class="concealed">{xen:phrase tms_modifications}</a>
@@ -75,14 +71,14 @@
 
 	<xen:textboxunit label="{xen:phrase tms_modification}:" name="title" value="{$modification.title}" />
 
-	<xen:textboxunit label="{xen:phrase template}:" name="template_title" value="{$modification.template_title}" type="search" 
-               data-textUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}}" data-textTarget="#TemplateTextTarget"
+	<xen:textboxunit id="templateTitle" label="{xen:phrase template}:" name="template_title" value="{$modification.template_title}" type="search" 
+               data-templateUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}}"
                results="5" inputclass="AutoComplete AcSingle TemplateText" 
                data-acurl="{xen:adminlink 'templates/search-title', '', 'style_id={$style.style_id}'}" />
 
         <dl class="ctrlUnit">
-        <dt>{xen:phrase tms_original_template_text}:</dt>
-        <dd><div class="eventDescription baseHtml" style="padding:0!important;"><pre id="TemplateTextTarget" style="min-height:100px;max-height:200px;"></pre></div></dd>
+        <dt>{xen:phrase tms_original_template}:</dt>
+        <dd><div class="eventDescription baseHtml" style="padding:0!important;"><pre id="templateOriginal" style="min-height:100px;max-height:200px;"></pre></div></dd>
         </dl>
 		
 	<xen:textboxunit label="{xen:phrase description}:" name="description" value="{$modification.description}" />
@@ -119,8 +115,8 @@
 
 	<xen:submitunit>
 		<div class="eventDescription baseHtml">{xen:phrase tms_if_final_template_not_valid_all_mods_ignored, 'link={xen:adminlink logs/server-error}'}</div>
-                <div style="display:none;"><xen:include template="tms_compare_button" /></div>
-		<input type="submit" name="savecheck" value="{xen:phrase tms_save_and_check}" accesskey="s" class="button OverlayTrigger" id="saveCheckButton" />
+                <div style="display:none;"><xen:include template="tms_diff_button" /></div>
+		<input type="submit" name="reload" value="{xen:phrase tms_save_and_check}" accesskey="s" class="button OverlayTrigger" id="saveCheckButton" />
 		<input type="submit" name="saveexit" value="{xen:phrase save_and_exit}" accesskey="e" class="button OverlayTrigger" id="saveExitButton" />
 
 		<input type="button" name="delete" value="{xen:if $style.style_id, {xen:phrase tms_revert_modification}, {xen:phrase tms_delete_modification}}..."
@@ -265,7 +261,10 @@
       {xen:phrase tms_applied_x_times, 'count={$modification.apply_count}'}
    </xen:if>
 </a>
-<a href="{xen:adminlink 'templates/compare', $modification, 'style_id={$style.style_id}'}" class="secondaryContent OverlayTrigger"  data-cacheOverlay="false">{xen:phrase tms_diff}</a>]]></template>
+<xen:if is="!{$template}">
+<a href="{xen:adminlink 'templates/edit', $modification, 'style_id={$style.style_id}'}" class="secondaryContent">{xen:phrase template}</a>
+<a href="{xen:adminlink 'templates/diff', $modification, 'style_id={$style.style_id}'}" class="secondaryContent OverlayTrigger"  data-cacheOverlay="false">{xen:phrase tms_diff}</a>
+</xen:if>]]></template>
     <template title="tms_need_rebuild_notice"><![CDATA[<p class="importantMessage">
     <a href="{xen:adminlink template-modifications}">{xen:phrase tms_there_modifications_that_may_be_not_applied_rebuild_templates_to_apply}</a>
 </p>
@@ -299,10 +298,10 @@
         <xen:submitunit save="{xen:phrase tms_export_style}" />
 	<input type="hidden" name="_xfToken" value="{$visitor.csrf_token_page}" />
 </form>]]></template>
-    <template title="tms_template_compare"><![CDATA[<xen:require css="tms_template_compare.css" />
+    <template title="tms_template_diff"><![CDATA[<xen:require css="tms_template_diff.css" />
 <xen:title>{xen:phrase tms_compare_original_and_final_versions}</xen:title>
 
-<div class="sectionMain" data-overlayClass="compare">
+<div class="sectionMain" data-overlayClass="diff">
         <xen:if is="{$preview}">
 	<p class="importantMessage">
 		<a href="{xen:adminlink template-modifications}">{xen:phrase tms_this_preview_all_changes_will_be_applied_after_rebuilding_templates}</a>
@@ -322,7 +321,7 @@
 </xen:if>
 </div>
 ]]></template>
-    <template title="tms_template_compare.css"><![CDATA[.Admin body.simple #content {
+    <template title="tms_template_diff.css"><![CDATA[.Admin body.simple #content {
     margin-top: 20px !important;
     width: 90% !important;
     /*height: 90% !important;*/
@@ -430,21 +429,35 @@ body .Differences tfoot th:last-of-type
         margin:50px;
 }
 
-.xenOverlay.compare { width: 90%; }
+.xenOverlay.diff{ width: 90%;}
 
-.xenOverlay.compare .sectionMain
-{
-}
-
-.xenOverlay.compare .primaryContent
+.xenOverlay.diff .primaryContent
 {
 	height: 600px;
 	overflow: auto;
 }
 
-.xenOverlay.compare> .sectionMain {background-color: #FFFFFF;}
+.xenOverlay.diff > .sectionMain {background-color: #FFFFFF;}
 
 .subHeading a {margin-right: 50px;}]]></template>
+    <template title="tms_template_edit"><![CDATA[<xen:submitunit>
+     <input type="button" data-templateUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}" name="template_final" value="{xen:phrase tms_template_final}" class="button TemplateText"}"/>
+
+     <input type="button" name="diff" value="{xen:phrase tms_diff}"
+	accesskey="d" class="button OverlayTrigger"
+	data-href="{xen:adminlink templates/diff, null, 'title={$template.title}', 'style_id={$style.style_id}'}" data-cacheOverlay="false"
+      />
+</xen:submitunit>
+
+<xen:require css="code_event.css" />
+
+<dl class="ctrlUnit fullWidth surplusLabel" style="display: none;">
+	<dt><label for="templateFinal">{xen:phrase tms_final_template}:</label></dt>
+	<dd>
+	<pre id="templateFinal" class="textCtrl code" style="overflow:auto;height:500px" wrap="off" cols="60" rows="20" name="template_final">{$template.template_final}</pre>
+<p class="explain">{xen:phrase template_with_applied_modifications_not_editable}</p>
+	</dd>
+</dl>]]></template>
     <template title="tms_tools"><![CDATA[<xen:title>{xen:phrase tms_tools}</xen:title>
 
 <xen:form action="{xen:adminlink 'tools/cache-rebuild'}">
@@ -494,6 +507,7 @@ If the option is disabled you need to rebuild templates to see changes.]]></phra
     <phrase title="option_tmsSafeRebuild" version_id="2" version_string="Beta 2"><![CDATA[Careful Rebuild]]></phrase>
     <phrase title="option_tmsSafeRebuild_explain" version_id="2" version_string="Beta 2"><![CDATA[Use it only if you have errors while rebuilding.<br/>
 This will decrease amount of operations in one step of rebuilding.]]></phrase>
+    <phrase title="template_with_applied_modifications_not_editable" version_id="3" version_string="1.1.1"><![CDATA[Template with applied modifications (not editable)]]></phrase>
     <phrase title="tms_applied_x_times" version_id="2" version_string="Beta 2"><![CDATA[Applied {count} times]]></phrase>
     <phrase title="tms_compare_original_and_final_versions" version_id="0" version_string=""><![CDATA[Compare Original and Final Versions]]></phrase>
     <phrase title="tms_complete" version_id="3" version_string="1.1.0"><![CDATA[Complete]]></phrase>
@@ -509,13 +523,14 @@ This will decrease amount of operations in one step of rebuilding.]]></phrase>
     <phrase title="tms_export_original_templates_and_all_modifications" version_id="3" version_string="1.1.0"><![CDATA[Export original templates and modifications. This keeps info about modifications but works only if TMS is installed.]]></phrase>
     <phrase title="tms_export_style" version_id="3" version_string="1.1.0"><![CDATA[Export Style]]></phrase>
     <phrase title="tms_export_type" version_id="3" version_string="1.1.0"><![CDATA[Export Type]]></phrase>
+    <phrase title="tms_final_template" version_id="3" version_string="1.1.1"><![CDATA[Final Template]]></phrase>
     <phrase title="tms_if_final_template_not_valid_all_mods_ignored" version_id="3" version_string="1.0.2"><![CDATA[If final template is not valid all it's modifications are ignored. Check <a href="{link}">Server Error Log</a>.]]></phrase>
     <phrase title="tms_independent" version_id="3" version_string="1.1.0"><![CDATA[TMS-independent]]></phrase>
     <phrase title="tms_modification" version_id="0" version_string=""><![CDATA[Modification]]></phrase>
     <phrase title="tms_modifications" version_id="1" version_string="Beta 1"><![CDATA[Template Modifications]]></phrase>
-    <phrase title="tms_modification_callback_explanation_html" version_id="3" version_string="1.0.2"><![CDATA[You may optionally specify a PHP callback here in order to make complicated modifications.<br /><br />
+    <phrase title="tms_modification_callback_explanation_html" version_id="3" version_string="1.1.1"><![CDATA[You may optionally specify a PHP callback here in order to make complicated modifications.<br /><br />
 Callback signature:
-<blockquote><code>&$templateText, &$applyCount, &$styleId</code></blockquote>
+<blockquote><code>&$templateText, &$applyCount, $styleId</code></blockquote>
 Callback arguments:
 <ol>
 	<li><code>string &$templateText</code><br />The template text. Designed to be modified.</li>
@@ -527,9 +542,8 @@ Callback arguments:
     <phrase title="tms_modification_title" version_id="0" version_string=""><![CDATA[Modification Title]]></phrase>
     <phrase title="tms_modification_titles_must_be_unique" version_id="1" version_string="Beta 1"><![CDATA[Modification titles must be unique. The specified title is already in use.]]></phrase>
     <phrase title="tms_modification_type" version_id="2" version_string="Beta 2"><![CDATA[Modification Type]]></phrase>
-    <phrase title="tms_modified_version" version_id="1" version_string="Beta 1"><![CDATA[Modified Version]]></phrase>
     <phrase title="tms_no_differences_found" version_id="0" version_string=""><![CDATA[No differences found.]]></phrase>
-    <phrase title="tms_original_template_text" version_id="3" version_string="1.0.0"><![CDATA[Original Template Text]]></phrase>
+    <phrase title="tms_original_template" version_id="3" version_string="1.1.1"><![CDATA[Original Template]]></phrase>
     <phrase title="tms_please_confirm_reversion_of_customized_components_from_style" version_id="3" version_string="Release Candidate 1.0.1"><![CDATA[Please confirm that you want to revert {numTemplates} templates, {numModifications} template modifications and {numProperties} style properties from the style <em>{style}</em> to their default values.]]></phrase>
     <phrase title="tms_please_confirm_that_you_want_to_delete_following_modification" version_id="0" version_string=""><![CDATA[Please confirm that you want to delete the following modification]]></phrase>
     <phrase title="tms_please_confirm_that_you_want_to_revert_the_following_modification" version_id="0" version_string=""><![CDATA[Please confirm that you want to revert the customizations made in the style <em>{style}</em> to the following modification]]></phrase>
@@ -548,6 +562,7 @@ Callback arguments:
     <phrase title="tms_search_value" version_id="1" version_string="Beta 1"><![CDATA[Search]]></phrase>
     <phrase title="tms_str_replace" version_id="2" version_string="Beta 2"><![CDATA[String Replace]]></phrase>
     <phrase title="tms_style_contains_no_customized_templates_or_modifications_or_properties" version_id="3" version_string="Release Candidate 1.0.1"><![CDATA[This style contains no customized templates or template modifications or style properties.]]></phrase>
+    <phrase title="tms_template_final" version_id="3" version_string="1.1.1"><![CDATA[Final Template]]></phrase>
     <phrase title="tms_test_compilation" version_id="0" version_string=""><![CDATA[Test Compilation]]></phrase>
     <phrase title="tms_there_modifications_that_may_be_not_applied_rebuild_templates_to_apply" version_id="2" version_string="Beta 2"><![CDATA[There are modifications that may be not applied. Rebuild templates to apply them.]]></phrase>
     <phrase title="tms_this_modification_can_not_be_modified" version_id="1" version_string="Beta 1"><![CDATA[This template modification can not be modified.]]></phrase>

@@ -182,19 +182,19 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 
 		$style = $this->_getStyleModel()->getStyleByid($writer->get('style_id'), true);
 
-		if ($this->_input->filterSingle('savecheck', XenForo_Input::STRING))
+		if ($this->_input->filterSingle('reload', XenForo_Input::STRING))
 		{
 			if($writer->isInsert())
 			{
 				return $this->responseRedirect(
 					XenForo_ControllerResponse_Redirect::RESOURCE_UPDATED,
-					XenForo_Link::buildAdminLink('template-modifications/edit', $writer->getMergedData(), array('style_id' => $writer->get('style_id'))).'#compare'
+					XenForo_Link::buildAdminLink('template-modifications/edit', $writer->getMergedData(), array('style_id' => $writer->get('style_id'))).'#diff'
 				);
 			}
 			else
 			{
 				$this->_request->setParam('title',$writer->get('template_title'));
-				return $this->responseReroute('XenForo_ControllerAdmin_Template', 'compare');
+				return $this->responseReroute('XenForo_ControllerAdmin_Template', 'diff');
 			}
 		}
 
