@@ -440,7 +440,9 @@ body .Differences tfoot th:last-of-type
 .xenOverlay.diff > .sectionMain {background-color: #FFFFFF;}
 
 .subHeading a {margin-right: 50px;}]]></template>
-    <template title="tms_template_edit"><![CDATA[<xen:submitunit>
+    <template title="tms_template_edit"><![CDATA[<xen:require js="js/tms/tms.js" />
+
+<xen:submitunit>
      <input type="button" data-templateUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}" name="template_final" value="{xen:phrase tms_template_final}" class="button TemplateText"}"/>
 
      <input type="button" name="diff" value="{xen:phrase tms_diff}"
