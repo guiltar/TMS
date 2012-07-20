@@ -115,7 +115,12 @@
 
 	<xen:submitunit>
 		<div class="eventDescription baseHtml">{xen:phrase tms_if_final_template_not_valid_all_mods_ignored, 'link={xen:adminlink logs/server-error}'}</div>
-                <div style="display:none;"><xen:include template="tms_diff_button" /></div>
+
+                <input style="display:none;" type="button" name="diff" value="{xen:phrase tms_diff}"
+	            accesskey="d" class="button OverlayTrigger"
+	            data-href="{xen:adminlink templates/diff, null, 'title={$modification.template_title}', 'style_id={$style.style_id}'}" data-cacheOverlay="false"
+                />
+
 		<input type="submit" name="reload" value="{xen:phrase tms_save_and_check}" accesskey="s" class="button OverlayTrigger" id="saveCheckButton" />
 		<input type="submit" name="saveexit" value="{xen:phrase save_and_exit}" accesskey="e" class="button OverlayTrigger" id="saveExitButton" />
 
