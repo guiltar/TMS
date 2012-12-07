@@ -506,7 +506,7 @@ body .Differences tfoot th:last-of-type
   <phrases>
     <phrase title="admin_navigation_TemplateModifications" version_id="0" version_string=""><![CDATA[Template Modifications]]></phrase>
     <phrase title="option_group_TMS" version_id="2" version_string="Beta 2"><![CDATA[Template Modification System]]></phrase>
-    <phrase title="option_group_TMS_description" version_id="2" version_string="Beta 2"></phrase>
+    <phrase title="option_group_TMS_description" version_id="2" version_string="Beta 2"><![CDATA[]]></phrase>
     <phrase title="option_tmsFullCompile" version_id="2" version_string="Beta 2"><![CDATA[Compile templates on modification save and switch]]></phrase>
     <phrase title="option_tmsFullCompile_explain" version_id="2" version_string="Beta 2"><![CDATA[This allows to see changes instantly but slows down saving modifications and switching addons.<br/>
 Don't use it if you have timeouts when you save modifications.<br/>
