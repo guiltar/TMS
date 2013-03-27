@@ -219,13 +219,13 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 		return $this->getModelFromCache('TMS_Model_Modification');
 	}
 
-	public function fetchAllKeyed($sql, $key, $bind = array())
+	public function fetchAllKeyed($sql, $key, $bind = array(), $nullPrefix = '')
 	{
 		if (strpos($sql, 'template_map') !== false) {
 			$sql = str_replace('SELECT ', 'SELECT template_map.template_final, template_map.template_modifications, ', $sql);
 		}
 
-		return parent::fetchAllKeyed($sql, $key, $bind);
+		return parent::fetchAllKeyed($sql, $key, $bind, $nullPrefix);
 	}
 
 }
