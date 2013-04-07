@@ -23,10 +23,15 @@ class TMS_ControllerHelper_Modification extends XenForo_ControllerHelper_Abstrac
 		{
 			foreach ($addOnModifications as &$modification)
 			{
-				if ($modification['template_modifications']) {
+				if ($modification['template_modifications'])
+				{
 					$modData = unserialize($modification['template_modifications']);
-					$modification['apply_count'] = !empty($modData[$modification['modification_id']]['apply_count']) ? $modData[$modification['modification_id']]['apply_count'] : 0;
-					if ($modification['active'] && ($modification['addon_active'] || $modification['addon_id'] == '')) {
+
+					$modification['apply_count'] = !empty($modData[$modification['modification_id']]['apply_count']) ?
+						$modData[$modification['modification_id']]['apply_count'] : 0;
+
+					if ($modification['active'] && ($modification['addon_active'] || $modification['addon_id'] == ''))
+					{
 						$modification['class'] = !$modification['apply_count'] ? 'NotApplied' :
 							($modification['apply_count'] > 1 ? 'MultipleApplied' : 'OnceApplied');
 					}

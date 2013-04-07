@@ -47,7 +47,8 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		/* @var $modificationModel TMS_Model_Modification */
 		$modificationModel = $this->getModelFromCache('TMS_Model_Modification');
 
-		if ($overwriteStyleId) {
+		if ($overwriteStyleId)
+		{
 			$modificationModel->deleteModificationsInStyle($overwriteStyleId);
 			$targetStyleId = $overwriteStyleId;
 		}
@@ -60,7 +61,8 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 			$targetStyleId = 0;
 		}
 
-		if ($targetStyleId) {
+		if ($targetStyleId)
+		{
 			$modificationModel->importModificationsStyleXml($document->template_modifications, $targetStyleId);
 		}
 

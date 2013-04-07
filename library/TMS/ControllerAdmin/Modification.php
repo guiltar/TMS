@@ -2,12 +2,6 @@
 
 class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbstract
 {
-	protected function _preDispatch($action)
-	{
-		$this->assertAdminPermission('option');
-		parent::_preDispatch($action);
-	}
-
 	/**
 	 * Modification index. This is a list of modifications, so redirect this to a
 	 * style-specific list.

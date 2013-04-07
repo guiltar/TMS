@@ -27,7 +27,9 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 		$templateOriginal = $this->_text;
 
 		$cacheRecordKey = $templateId . ':' . implode(',', array_keys($mods));
-		if ($templateId && isset(self::$_modificationCache[$cacheRecordKey])) {
+
+		if ($templateId && isset(self::$_modificationCache[$cacheRecordKey]))
+		{
 			return self::$_modificationCache[$cacheRecordKey];
 		}
 
@@ -39,7 +41,8 @@ class TMS_Template_Compiler extends XenForo_Template_Compiler
 
 		$tms = XenForo_Model::create('XenForo_Model_AddOn')->getAddOnById('TMS');
 
-		if (!empty($mods) && $tms['active']) {
+		if (!empty($mods) && $tms['active'])
+		{
 			try
 			{
 				foreach ($mods as &$mod)

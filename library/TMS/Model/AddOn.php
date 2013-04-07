@@ -45,7 +45,8 @@ class TMS_Model_AddOn extends XFCP_TMS_Model_AddOn
 	{
 		parent::deleteAddOnMasterData($addOnId);
 
-		if ($addOnId != 'TMS') {
+		if ($addOnId != 'TMS')
+		{
 			$this->getModelFromCache('TMS_Model_Modification')->deleteModificationsForAddOn($addOnId);
 		}
 	}

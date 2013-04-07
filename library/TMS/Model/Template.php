@@ -16,15 +16,19 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 	{
 		$templates = parent::getAllTemplatesInStyle($styleId, $basicData);
 
-		if(XenForo_Application::isRegistered('tmsIndependentExport')){
+		if(XenForo_Application::isRegistered('tmsIndependentExport'))
+		{
 			$templateTitles = array();
-			foreach($templates as $template) $templateTitles[] = $template['title'];
+			foreach($templates as $template)
+				$templateTitles[] = $template['title'];
 
 			$modifications = $this->_getModificationModel()->getAllModificationsInStyle($styleId);
-			foreach($modifications as $modification) $templateTitles[] = $modification['template_title'];
+			foreach($modifications as $modification)
+				$templateTitles[] = $modification['template_title'];
 
 			$templates = $this->getEffectiveTemplatesByTitles($templateTitles, $styleId);
-			foreach($templates as &$template) $template['template'] = $template['template_final'];
+			foreach($templates as &$template) $template['template'] =
+				$template['template_final'];
 		}
 
 		return $templates;
@@ -54,7 +58,9 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 			$modified = $compiler->modifyAndParse($title, $styleId, $template['template_id']);
 			$template['template_final'] = $modified['template_final'];
 			$template['template_modifications'] = serialize($modified['template_modifications']);
-			if (!is_null($modified['template_parsed'])) {
+
+			if (!is_null($modified['template_parsed']))
+			{
 				$template['template_parsed'] = serialize($modified['template_parsed']);
 			}
 		}
@@ -82,7 +88,8 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 
 	public function getNamedTemplatesInStyleTreeWithChildren(array $titles, $styleId = 0)
 	{
-		if (!$titles) {
+		if (!$titles)
+		{
 			return array();
 		}
 
@@ -117,7 +124,8 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 	{
 		self::$modifyTemplate = true;
 
-		if (!XenForo_Application::getOptions()->get('tmsSafeRebuild')) {
+		if (!XenForo_Application::getOptions()->get('tmsSafeRebuild'))
+		{
 			return parent::compileAllTemplates($maxExecution, $startStyle, $startTemplate);
 		}
 
@@ -133,9 +141,12 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 
 		XenForo_Db::beginTransaction($db);
 
-		if ($startStyle == 0 && $startTemplate == 0) {
+		if ($startStyle == 0 && $startTemplate == 0)
+		{
 			$db->query('DELETE FROM xf_template_compiled');
-			if (XenForo_Application::get('options')->templateFiles) {
+
+			if (XenForo_Application::get('options')->templateFiles)
+			{
 				XenForo_Template_FileHandler::delete(null, null, null);
 			}
 		}
@@ -154,19 +165,22 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 				isset($template['map_style_id']) ? $template['map_style_id'] : $template['style_id']
 			);
 
-			if ($maxExecution && (microtime(true) - $startTime) > $maxExecution) {
+			if ($maxExecution && (microtime(true) - $startTime) > $maxExecution)
+			{
 				$complete = false;
 				break;
 			}
 		}
 
-		if ($complete) {
+		if ($complete)
+		{
 			$this->getModelFromCache('XenForo_Model_Style')->updateAllStylesLastModifiedDate();
 		}
 
 		XenForo_Db::commit($db);
 
-		if ($complete) {
+		if ($complete)
+		{
 			return true;
 		}
 		else
@@ -221,7 +235,8 @@ class TMS_Model_Template extends XFCP_TMS_Model_Template
 
 	public function fetchAllKeyed($sql, $key, $bind = array(), $nullPrefix = '')
 	{
-		if (strpos($sql, 'template_map') !== false) {
+		if (strpos($sql, 'template_map') !== false)
+		{
 			$sql = str_replace('SELECT ', 'SELECT template_map.template_final, template_map.template_modifications, ', $sql);
 		}
 

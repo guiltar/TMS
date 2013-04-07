@@ -15,7 +15,8 @@ class TMS_DataWriter_AddOn extends XFCP_TMS_DataWriter_AddOn
 	{
 		parent::_postSave();
 
-		if ($this->isUpdate() && $this->isChanged('addon_id')) {
+		if ($this->isUpdate() && $this->isChanged('addon_id'))
+		{
 			$db = $this->_db;
 			$updateClause = 'addon_id = ' . $db->quote($this->getExisting('addon_id'));
 			$updateValue = array('addon_id' => $this->get('addon_id'));
@@ -23,8 +24,10 @@ class TMS_DataWriter_AddOn extends XFCP_TMS_DataWriter_AddOn
 			$db->update('tms_modification', $updateValue, $updateClause);
 		}
 
-		if ($this->isUpdate() && $this->isChanged('active')) {
-			if ($this->get('addon_id') == 'TMS') {
+		if ($this->isUpdate() && $this->isChanged('active'))
+		{
+			if ($this->get('addon_id') == 'TMS')
+			{
 				$mods = $this->_getModificationModel()->getAllModifications();
 			}
 			else
@@ -38,7 +41,8 @@ class TMS_DataWriter_AddOn extends XFCP_TMS_DataWriter_AddOn
 				$templateTitles[] = $mod['template_title'];
 			}
 
-			if (XenForo_Application::getOptions()->get('tmsFullCompile')) {
+			if (XenForo_Application::getOptions()->get('tmsFullCompile'))
+			{
 				$templateModel = $this->_getTemplateModel();
 				// keyed by template_map_id
 				$templates = $templateModel->getNamedTemplatesInStyleTreeWithChildren($templateTitles);
