@@ -349,7 +349,7 @@ class TMS_Model_Modification extends XenForo_Model
 			$this->deleteModificationsForAddOn($addOnId);
 		}
 
-		$modifications = XenForo_Helper_DevelopmentXml::fixPhpBug50670($xml->modification);
+		$modifications = XenForo_Helper_DevelopmentXml::fixPhpBug50670($xml->template_modifications);
 
 		$titles = array();
 		$current = 0;
