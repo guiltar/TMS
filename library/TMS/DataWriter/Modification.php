@@ -81,17 +81,14 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 	 */
 	protected function _getExistingData($data)
 	{
-		if ($id = $this->_getExistingPrimaryKey($data, 'modification_id'))
-		{
-			return array('tms_modification' => $this->_getModificationModel()->getModificationById($id));
+		if ($id = $this->_getExistingPrimaryKey($data, 'modification_id')) {
+			return array('tms_modification' => $this->_getTmsModModel()->getModificationById($id));
 		}
-		else if (isset($data['title'], $data['style_id']))
-		{
+		else if (isset($data['title'], $data['style_id'])) {
 			$title = $data['title'];
 			$styleId = $data['style_id'];
 		}
-		else if (isset($data[0], $data[1]))
-		{
+		else if (isset($data[0], $data[1])) {
 			$title = $data[0];
 			$styleId = $data[1];
 		}
@@ -99,8 +96,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 		{
 			return false;
 		}
-
-		return array('tms_modification' => $this->_getModificationModel()->getModificationInStyleByTitle($title, $styleId));
+		return array('tms_modification' => $this->_getTmsModModel()->getModificationInStyleByTitle($title, $styleId));
 	}
 
 	/**
@@ -140,8 +136,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 		switch ($this->get('modification_type'))
 		{
 			case 'str_replace':
-				if (!$this->get('search_value'))
-				{
+				if (!$this->get('search_value')) {
 					$this->error(new XenForo_Phrase('tms_please_enter_valid_search_string'), 'search_string');
 				}
 				break;
@@ -166,11 +161,9 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 		}
 
 		if ($this->getOption(self::OPTION_CHECK_DUPLICATE)) {
-			if ($this->isInsert() || $this->get('title') != $this->getExisting('title'))
-			{
-				$titleConflict = $this->_getModificationModel()->getModificationInStyleByTitle($this->getNew('title'), $this->get('style_id'));
-				if ($titleConflict)
-				{
+			if ($this->isInsert() || $this->get('title') != $this->getExisting('title')) {
+				$titleConflict = $this->_getTmsModModel()->getModificationInStyleByTitle($this->getNew('title'), $this->get('style_id'));
+				if ($titleConflict) {
 					$this->error(new XenForo_Phrase('tms_modification_titles_must_be_unique'), 'title');
 				}
 			}
@@ -224,8 +217,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 	 */
 	protected function _postDelete()
 	{
-		if ($this->getOption(self::OPTION_FULL_COMPILE))
-		{
+		if ($this->getOption(self::OPTION_FULL_COMPILE)) {
 			XenForo_Template_Compiler::removeTemplateFromCache($this->get('template_title'));
 			XenForo_Template_Compiler::removeTemplateFromCache($this->getExisting('template_title'));
 
@@ -250,7 +242,7 @@ class TMS_DataWriter_Modification extends XenForo_DataWriter
 	 *
 	 * @return TMS_Model_Modification
 	 */
-	protected function _getModificationModel()
+	protected function _getTmsModModel()
 	{
 		return $this->getModelFromCache('TMS_Model_Modification');
 	}

@@ -43,19 +43,19 @@ class TMS_Model_Modification extends XenForo_Model
 		// now looking for the most closed parent modification for each title
 		$style = $this->_getStyleModel()->getStyleById($styleId);
 		$parentsStyleIds = explode(',', $style['parent_list']);
-		$modsGroupedByTitle = array();
+		$modsGrouppedByTitile = array();
 		$templateTitles = array();
 
 		foreach ($mods as $mod)
 		{
-			$modsGroupedByTitle[$mod['title']][$mod['style_id']] = $mod;
+			$modsGrouppedByTitile[$mod['title']][$mod['style_id']] = $mod;
 			$templateTitles[] = $mod['template_title'];
 		}
 
 		$effectiveTemplates = $this->_getTemplateModel()->getEffectiveTemplatesByTitles($templateTitles, $styleId);
 		$effectiveMods = array();
 
-		foreach ($modsGroupedByTitle as $title => $modsTitled)
+		foreach ($modsGrouppedByTitile as $title => $modsTitled)
 		{
 			foreach ($parentsStyleIds as $parentStyleId)
 			{
@@ -344,20 +344,18 @@ class TMS_Model_Modification extends XenForo_Model
 
 		$startTime = microtime(true);
 
-		if ($offset == 0)
-		{
+		if ($offset == 0) {
 			$this->deleteModificationsForAddOn($addOnId);
 		}
 
-		$modifications = XenForo_Helper_DevelopmentXml::fixPhpBug50670($xml->template_modifications);
+		$modifications = XenForo_Helper_DevelopmentXml::fixPhpBug50670($xml->modification);
 
 		$titles = array();
 		$current = 0;
 		foreach ($modifications AS $modification)
 		{
 			$current++;
-			if ($current <= $offset)
-			{
+			if ($current <= $offset) {
 				continue;
 			}
 
@@ -378,12 +376,9 @@ class TMS_Model_Modification extends XenForo_Model
 			$modificationName = (string)$modification['title'];
 
 			$dw = XenForo_DataWriter::create('TMS_DataWriter_Modification');
-
-			if (isset($existingModifications[$modificationName]))
-			{
+			if (isset($existingModifications[$modificationName])) {
 				$dw->setExistingData($existingModifications[$modificationName], true);
 			}
-
 			$dw->setOption(TMS_DataWriter_Modification::OPTION_FULL_COMPILE, false);
 			$dw->setOption(TMS_DataWriter_Modification::OPTION_TEST_COMPILE, false);
 			$dw->setOption(TMS_DataWriter_Modification::OPTION_CHECK_DUPLICATE, false);

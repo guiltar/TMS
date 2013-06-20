@@ -16,7 +16,7 @@
 		__construct: function($input)
 		{
 			this.$input = $input;
-			this.url = $('.TemplateText').data('templateUrl');
+			this.url = $('.TemplateText').data('templateurl');
 			this.$originalTemplate = $('#templateOriginal');
 			this.$finalTemplate = $('#templateFinal');
 

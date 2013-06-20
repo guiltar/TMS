@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="TMS" title="Template Modification System" version_string="1.2.1" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Install" install_callback_method="build" uninstall_callback_class="TMS_Install" uninstall_callback_method="destroy">
+<addon addon_id="TMS" title="Template Modification System" version_string="1.2.2" version_id="3" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Install" install_callback_method="build" uninstall_callback_class="TMS_Install" uninstall_callback_method="destroy">
   <admin_navigation>
-    <navigation navigation_id="TemplateModifications" parent_navigation_id="templates" display_order="250" link="template-modifications" admin_permission_id="" debug_only="0" hide_no_children="0"/>
+    <navigation navigation_id="tmsMods" parent_navigation_id="stylesAndTemplates" display_order="316" link="tms-mods" admin_permission_id="style" debug_only="0" hide_no_children="0"/>
   </admin_navigation>
   <admin_permissions/>
   <admin_style_properties/>
   <admin_templates>
     <template title="tms_customized_modifications"><![CDATA[<xen:if is="{$modifications}">
 	<li>
-		<h3 class="textHeading"><a href="{xen:adminlink styles/template-modifications, $style}" class="concealed">{xen:phrase tms_modifications}</a>
+		<h3 class="textHeading"><a href="{xen:adminlink styles/tms-mods, $style}" class="concealed">{xen:phrase tms_modifications}</a>
 			<label class="Tooltip checkAllColumn" title="{xen:phrase select_all_items_in_this_group}"><input type="checkbox" class="CheckAll" data-target="#CustomModifications" /></label></h3>
 		<ol id="CustomModifications">
 			<xen:foreach loop="$modifications" value="$modification">
@@ -16,8 +16,8 @@
 					id="modification{$modification.modification_id}"
 					label="{$modification.template_title} — {$modification.title}"
 					snippet="{xen:phrase customized_in_version, 'version={$modification.version_string}'}"
-					href="{xen:adminlink template-modifications/edit, $modification}"
-					delete="{xen:adminlink template-modifications/delete, $modification}"
+					href="{xen:adminlink tms-mods/edit, $modification}"
+					delete="{xen:adminlink tms-mods/delete, $modification}"
 					deletehint="{xen:phrase tms_revert_customizations_to_this_modification}...">
 					<xen:html><label class="secondaryContent"><input type="checkbox" name="modifications[]" value="{$modification.modification_id}" /></label></xen:html>
 				</xen:listitem>
@@ -29,18 +29,18 @@
 <xen:h1>{xen:if $style.style_id, {xen:phrase tms_confirm_reversion_of_modification}, {xen:phrase tms_confirm_deletion_of_modification}}</xen:h1>
 
 <xen:navigation>
-	<xen:breadcrumb href="{xen:adminlink 'template-modifications/edit', $modification}">{$modification.title}</xen:breadcrumb>
+	<xen:breadcrumb href="{xen:adminlink 'tms-mods/edit', $modification}">{$modification.title}</xen:breadcrumb>
 </xen:navigation>
 
 <xen:require css="delete_confirmation.css" />
 
-<xen:form action="{xen:adminlink template-modifications/delete, $modification}" class="deleteConfirmForm formOverlay">
+<xen:form action="{xen:adminlink tms-mods/delete, $modification}" class="deleteConfirmForm formOverlay">
 
 	<p><xen:if is="{$style.style_id}">{xen:phrase tms_please_confirm_that_you_want_to_revert_the_following_modification, 'style={$style.title}'}:
 		<xen:else />{xen:phrase tms_please_confirm_that_you_want_to_delete_following_modification}:
 		</xen:if></p>		
 		
-	<strong><a href="{xen:adminlink 'template-modifications/edit', $modification}">{$modification.title}</a></strong>
+	<strong><a href="{xen:adminlink 'tms-mods/edit', $modification}">{$modification.title}</a></strong>
 
 	<xen:submitunit save="{xen:if $style.style_id, {xen:phrase tms_revert_modification}, {xen:phrase tms_delete_modification}}" />
 	
@@ -51,13 +51,13 @@
 <xen:if is="{$modification.modification_id}">
 	<xen:navigation>
                 <xen:breadcrumb href="{xen:adminlink styles, $style}#{xen:helper listitemid, $style.style_id}">{$style.title}</xen:breadcrumb>
-                <xen:breadcrumb href="{xen:adminlink template-modifications}">{xen:phrase tms_modifications}</xen:breadcrumb>
-		<xen:breadcrumb href="{xen:adminlink template-modifications}#{xen:helper listitemid, $modification.modification_id}">{$modification.title}</xen:breadcrumb>
+                <xen:breadcrumb href="{xen:adminlink tms-mods}">{xen:phrase tms_modifications}</xen:breadcrumb>
+		<xen:breadcrumb href="{xen:adminlink tms-mods}#{xen:helper listitemid, $modification.modification_id}">{$modification.title}</xen:breadcrumb>
 	</xen:navigation>
 <xen:else/>
 	<xen:navigation>
                 <xen:breadcrumb href="{xen:adminlink styles, $style}#{xen:helper listitemid, $style.style_id}">{$style.title}</xen:breadcrumb>
-                <xen:breadcrumb href="{xen:adminlink template-modifications}">{xen:phrase tms_modifications}</xen:breadcrumb>
+                <xen:breadcrumb href="{xen:adminlink tms-mods}">{xen:phrase tms_modifications}</xen:breadcrumb>
 	</xen:navigation>
 </xen:if>
 
@@ -65,7 +65,7 @@
 <xen:require js="js/xenforo/event_listener.js" />
 <xen:require css="code_event.css" />
 
-<xen:form action="{xen:adminlink 'template-modifications/save'}">
+<xen:form action="{xen:adminlink 'tms-mods/save'}">
 	
 	<xen:controlunit label="{xen:phrase style}:">{$style.title}</xen:controlunit>
 
@@ -126,7 +126,7 @@
 
 		<input type="button" name="delete" value="{xen:if $style.style_id, {xen:phrase tms_revert_modification}, {xen:phrase tms_delete_modification}}..."
 			accesskey="d" class="button OverlayTrigger"
-			data-href="{xen:adminlink 'template-modifications/delete', $modification}"
+			data-href="{xen:adminlink 'tms-mods/delete', $modification}"
 			id="deleteButton" {xen:if '!{$modification.modification_id}', 'style="display: none"'}
 		/>
 	</xen:submitunit>
@@ -135,7 +135,7 @@
     <template title="tms_modification_list"><![CDATA[<xen:title>{xen:phrase tms_modifications}</xen:title>
 
 <xen:topctrl>
-	<a href="{xen:adminlink 'template-modifications/add', null, 'style_id={$style.style_id}'}" class="button">+ {xen:phrase tms_create_modification}</a>
+	<a href="{xen:adminlink 'tms-mods/add', null, 'style_id={$style.style_id}'}" class="button">+ {xen:phrase tms_create_modification}</a>
         <xen:form action="{xen:adminlink 'tools/cache-rebuild'}">
 	   <input class="button primary" type="submit" accesskey="s" value="{xen:phrase tms_rebuild_templates}">
 	   <input type="hidden" name="cache" value="Template" />
@@ -149,10 +149,10 @@
 			<div class="primaryContent menuHeader"><h3>{xen:phrase styles}</h3></div>
 			<ul class="secondaryContent blockLinksList">
 				<xen:if is="{$masterStyle}">
-					<li><a href="{xen:adminlink 'styles/template-modifications', $masterStyle.style_id}"><span class="_depth0">{$masterStyle.title}</span></a></li>
+					<li><a href="{xen:adminlink 'styles/tms-mods', $masterStyle.style_id}"><span class="_depth0">{$masterStyle.title}</span></a></li>
 				</xen:if>
 				<xen:foreach loop="$styles" value="$styleOption">
-					<li><a href="{xen:adminlink 'styles/template-modifications', $styleOption}"><span class="_depth{$styleOption.depth}">{$styleOption.title}</span></a></li>
+					<li><a href="{xen:adminlink 'styles/tms-mods', $styleOption}"><span class="_depth{$styleOption.depth}">{$styleOption.title}</span></a></li>
 				</xen:foreach>
 			</ul>
 		</div>
@@ -192,7 +192,7 @@
 <xen:require css="filter_list.css" />
 <xen:require js="js/xenforo/filter_list.js" />
 
-<xen:form action="{xen:adminlink 'template-modifications/toggle'}" class="section AutoValidator">
+<xen:form action="{xen:adminlink 'tms-mods/toggle'}" class="section AutoValidator">
 
 	<h2 class="subHeading">
 		<xen:include template="filter_list_controls" />
@@ -208,10 +208,10 @@
 						<xen:listitem
 							id="{$modification.modification_id}"
                                                         class="item_{$modification.modification_state}"
-							href="{xen:adminlink 'template-modifications/edit', $modification, 'style_id={$style.style_id}'}"
+							href="{xen:adminlink 'tms-mods/edit', $modification, 'style_id={$style.style_id}'}"
 							label="{$modification.template_title} — {$modification.title}"
 							snippet="{$modification.description}"
-				                        delete="{xen:if $modification.canDelete, {xen:adminlink 'template-modifications/delete', $modification}, ''}"
+				                        delete="{xen:if $modification.canDelete, {xen:adminlink 'tms-mods/delete', $modification}, ''}"
 				                        deletehint="{xen:if '{$modification.modification_state} == "custom"', '{xen:phrase tms_revert_customizations_to_this_modification}'}"
 							toggle="{$modification.active}"
 							toggletitle="{xen:phrase enable_disable_x, 'title={$modification.template_title}'}"> 
@@ -234,11 +234,11 @@
 						<xen:listitem
 							id="{$modification.modification_id}"
                                                         class="item_{$modification.modification_state}"
-							href="{xen:adminlink 'template-modifications/edit', $modification, 'style_id={$style.style_id}'}"
+							href="{xen:adminlink 'tms-mods/edit', $modification, 'style_id={$style.style_id}'}"
 							label="{$modification.template_title} — {$modification.title}"
 							labelclass="{xen:if '!{$addOn.active}', ' parentDisabled'}"
 							snippet="{$modification.description}"
-				                        delete="{xen:if $modification.canDelete, {xen:adminlink 'template-modifications/delete', $modification}, ''}"
+				                        delete="{xen:if $modification.canDelete, {xen:adminlink 'tms-mods/delete', $modification}, ''}"
 				                        deletehint="{xen:if '{$modification.modification_state} == "custom"', '{xen:phrase tms_revert_customizations_to_this_modification}'}"
 							toggle="{$modification.active}"
 							toggletitle="{xen:phrase enable_disable_x, 'title={$modification.template_title}'}"> 
@@ -259,7 +259,7 @@
 
 	<input type="hidden" name="style_id" value="{$style.style_id}" />
 </xen:form>]]></template>
-    <template title="tms_modification_list_item_html"><![CDATA[<a href="{xen:adminlink 'template-modifications/edit', $modification, 'style_id={$style.style_id}'}" class="secondaryContent applyCount {$modification.class}">
+    <template title="tms_modification_list_item_html"><![CDATA[<a href="{xen:adminlink 'tms-mods/edit', $modification, 'style_id={$style.style_id}'}" class="secondaryContent applyCount {$modification.class}">
    <xen:if is="{$modification.class}=='Unknown'">
       {xen:phrase tms_rebuild_needed}
    <xen:else />
@@ -271,7 +271,7 @@
 <a href="{xen:adminlink 'templates/diff', $modification, 'style_id={$style.style_id}'}" class="secondaryContent OverlayTrigger"  data-cacheOverlay="false">{xen:phrase tms_diff}</a>
 </xen:if>]]></template>
     <template title="tms_need_rebuild_notice"><![CDATA[<p class="importantMessage">
-    <a href="{xen:adminlink template-modifications}">{xen:phrase tms_there_modifications_that_may_be_not_applied_rebuild_templates_to_apply}</a>
+    <a href="{xen:adminlink tms-mods}">{xen:phrase tms_there_modifications_that_may_be_not_applied_rebuild_templates_to_apply}</a>
 </p>
 ]]></template>
     <template title="tms_style_export"><![CDATA[<xen:title>{xen:phrase tms_exporting_style}: {$style.title}</xen:title>
@@ -309,7 +309,7 @@
 <div class="sectionMain" data-overlayClass="diff">
         <xen:if is="{$preview}">
 	<p class="importantMessage">
-		<a href="{xen:adminlink template-modifications}">{xen:phrase tms_this_preview_all_changes_will_be_applied_after_rebuilding_templates}</a>
+		<a href="{xen:adminlink tms-mods}">{xen:phrase tms_this_preview_all_changes_will_be_applied_after_rebuilding_templates}</a>
 	</p>
         </xen:if>
 
@@ -448,7 +448,7 @@ body .Differences tfoot th:last-of-type
     <template title="tms_template_edit"><![CDATA[<xen:require js="js/tms/tms.js" />
 
 <xen:submitunit>
-     <input type="button" data-templateUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}" name="template_final" value="{xen:phrase tms_template_final}" class="button TemplateText"}"/>
+     <input type="button" data-templateUrl="{xen:adminlink templates/text, '', 'style_id={$style.style_id}'}" name="template_final" value="{xen:phrase tms_template_final}" class="button TemplateText"/>
 
      <input type="button" name="diff" value="{xen:phrase tms_diff}"
 	accesskey="d" class="button OverlayTrigger"
@@ -474,15 +474,17 @@ body .Differences tfoot th:last-of-type
 	<input type="hidden" name="cache" value="Template" />
 </xen:form>]]></template>
   </admin_templates>
+  <admin_template_modifications/>
   <code_events/>
   <code_event_listeners>
-    <listener event_id="load_class_controller" execute_order="10" callback_class="TMS_Listener" callback_method="loadClassController" active="1" description=""/>
-    <listener event_id="load_class_datawriter" execute_order="10" callback_class="TMS_Listener" callback_method="loadClassDataWriter" active="1" description=""/>
-    <listener event_id="load_class_model" execute_order="10" callback_class="TMS_Listener" callback_method="loadClassModel" active="1" description=""/>
-    <listener event_id="template_post_render" execute_order="10" callback_class="TMS_Listener" callback_method="templatePostRender" active="1" description=""/>
+    <listener event_id="load_class_controller" execute_order="10" callback_class="TMS_Listener" callback_method="loadClassController" active="1" hint="" description=""/>
+    <listener event_id="load_class_datawriter" execute_order="10" callback_class="TMS_Listener" callback_method="loadClassDataWriter" active="1" hint="" description=""/>
+    <listener event_id="load_class_model" execute_order="10" callback_class="TMS_Listener" callback_method="loadClassModel" active="1" hint="" description=""/>
+    <listener event_id="template_post_render" execute_order="10" callback_class="TMS_Listener" callback_method="templatePostRender" active="1" hint="" description=""/>
   </code_event_listeners>
   <cron/>
   <email_templates/>
+  <email_template_modifications/>
   <optiongroups>
     <group group_id="TMS" display_order="1" debug_only="0"/>
     <option option_id="tmsFullCompile" edit_format="onoff" data_type="boolean" can_backup="1">
@@ -504,7 +506,7 @@ body .Differences tfoot th:last-of-type
     <interface_groups/>
   </permissions>
   <phrases>
-    <phrase title="admin_navigation_TemplateModifications" version_id="0" version_string=""><![CDATA[Template Modifications]]></phrase>
+    <phrase title="admin_navigation_tmsMods" version_id="3" version_string="1.2.1"><![CDATA[[TMS] Mods]]></phrase>
     <phrase title="option_group_TMS" version_id="2" version_string="Beta 2"><![CDATA[Template Modification System]]></phrase>
     <phrase title="option_group_TMS_description" version_id="2" version_string="Beta 2"><![CDATA[]]></phrase>
     <phrase title="option_tmsFullCompile" version_id="2" version_string="Beta 2"><![CDATA[Compile templates on modification save and switch]]></phrase>
@@ -578,11 +580,12 @@ Callback arguments:
   </phrases>
   <route_prefixes>
     <route_type type="admin">
-      <prefix original_prefix="template-modifications" class="TMS_Route_PrefixAdmin_Modifications" build_link="data_only"/>
+      <prefix original_prefix="tms-mods" class="TMS_Route_PrefixAdmin_Modifications" build_link="data_only"/>
     </route_type>
   </route_prefixes>
   <style_properties/>
   <templates/>
+  <template_modifications/>
   <bb_code_media_sites/>
   <template_modifications/>
 </addon>

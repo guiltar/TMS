@@ -11,8 +11,7 @@ class TMS_Install
 
 	public static final function getInstance()
 	{
-		if (!self::$_instance)
-		{
+		if (!self::$_instance) {
 			self::$_instance = new self;
 		}
 
@@ -24,8 +23,7 @@ class TMS_Install
 	 */
 	protected function _getDb()
 	{
-		if ($this->_db === null)
-		{
+		if ($this->_db === null) {
 			$this->_db = XenForo_Application::getDb();
 		}
 
@@ -34,17 +32,14 @@ class TMS_Install
 
 	public static function build($existingAddOn, $addOnData)
 	{
-		if (XenForo_Application::$versionId < 1010270)
-		{
-			// note: this can't be phrased
-			throw new XenForo_Exception('This add-on requires XenForo 1.1.2 or higher.', true);
+		if (XenForo_Application::$versionId < 1010270) {
+			throw new XenForo_Exception(new XenForo_Phrase('tms_requires_minimum_xenforo_version', array('version' => '1.1.2')));
 		}
 
 		$startVersion = 1;
 		$endVersion = $addOnData['version_id'];
 
-		if ($existingAddOn)
-		{
+		if ($existingAddOn) {
 			$startVersion = $existingAddOn['version_id'] + 1;
 		}
 
@@ -57,8 +52,7 @@ class TMS_Install
 		{
 			$method = '_installVersion' . $i;
 
-			if (method_exists($install, $method) === false)
-			{
+			if (method_exists($install, $method) === false) {
 				continue;
 			}
 
@@ -79,20 +73,20 @@ class TMS_Install
 
 		$db->query("
             CREATE TABLE tms_modification (
-            modification_id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT ,
-            title VARCHAR(25) NOT NULL ,
-            style_id INT(10) UNSIGNED NOT NULL default '0',
-            template_title VARCHAR(25) NOT NULL ,
-            execute_order INT(10) UNSIGNED NOT NULL ,
+            modification_id int( 10 ) unsigned NOT NULL AUTO_INCREMENT ,
+            title varchar( 25 ) NOT NULL ,
+            style_id int( 10 ) unsigned NOT NULL default '0',
+            template_title varchar( 25 ) NOT NULL ,
+            execute_order int( 10 ) unsigned NOT NULL ,
             description text NOT NULL ,
             search_string MEDIUMTEXT NULL ,
             replace_string MEDIUMTEXT NULL ,
-            addon_id VARCHAR(25) NOT NULL ,
-            version_id INT(10) UNSIGNED NOT NULL default '0',
-            version_string VARCHAR(30) NOT NULL ,
-            active TINYINT(3) UNSIGNED NOT NULL default '1',
-            PRIMARY KEY (modification_id) ,
-            UNIQUE KEY title (title , style_id)
+            addon_id varchar( 25 ) NOT NULL ,
+            version_id int( 10 ) unsigned NOT NULL default '0',
+            version_string varchar( 30 ) NOT NULL ,
+            active tinyint( 3 ) unsigned NOT NULL default '1',
+            PRIMARY KEY ( modification_id ) ,
+            UNIQUE KEY title ( title , style_id )
             ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
         ");
 	}
@@ -105,10 +99,10 @@ class TMS_Install
             ALTER TABLE tms_modification
             CHANGE search_string search_value MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
             CHANGE replace_string replace_value MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-            CHANGE title title VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-            ADD modification_type VARCHAR(20) NOT NULL DEFAULT 'str_replace' AFTER description ,
-            ADD callback_class VARCHAR(75) NOT NULL DEFAULT '' AFTER modification_type ,
-            ADD callback_method VARCHAR(50) NOT NULL DEFAULT '' AFTER callback_class
+            CHANGE title title VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+            ADD modification_type VARCHAR( 20 ) NOT NULL DEFAULT 'str_replace' AFTER description ,
+            ADD callback_class VARCHAR( 75 ) NOT NULL DEFAULT '' AFTER modification_type ,
+            ADD callback_method VARCHAR( 50 ) NOT NULL DEFAULT '' AFTER callback_class
         ");
 
 		$db->query("
@@ -129,7 +123,7 @@ class TMS_Install
 
 		$db->query("
             ALTER TABLE tms_modification
-            CHANGE template_title template_title VARCHAR(75) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
+            CHANGE template_title template_title VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
         ");
 	}
 
@@ -146,8 +140,7 @@ class TMS_Install
 		{
 			$method = '_uninstallStep' . $i;
 
-			if (method_exists($uninstall, $method) === false)
-			{
+			if (method_exists($uninstall, $method) === false) {
 				continue;
 			}
 

@@ -202,7 +202,7 @@ class TMS_ControllerAdmin_Template extends XFCP_TMS_ControllerAdmin_Template
 	 *
 	 * @return TMS_Model_Modification
 	 */
-	protected function _getModificationModel()
+	protected function _getTmsModModel()
 	{
 		return $this->getModelFromCache('TMS_Model_Modification');
 	}

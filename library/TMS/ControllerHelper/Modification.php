@@ -12,7 +12,7 @@ class TMS_ControllerHelper_Modification extends XenForo_ControllerHelper_Abstrac
 	{
 		$modifications = array();
 
-		foreach ($this->_getModificationModel()->getEffectiveModificationListForStyle($inputStyleId, $conditions) AS $modification)
+		foreach ($this->_getTmsModModel()->getEffectiveModificationListForStyle($inputStyleId, $conditions) AS $modification)
 		{
 			$modifications[$modification['addon_id']][$modification['modification_id']] = $modification;
 		}
@@ -23,15 +23,10 @@ class TMS_ControllerHelper_Modification extends XenForo_ControllerHelper_Abstrac
 		{
 			foreach ($addOnModifications as &$modification)
 			{
-				if ($modification['template_modifications'])
-				{
+				if ($modification['template_modifications']) {
 					$modData = unserialize($modification['template_modifications']);
-
-					$modification['apply_count'] = !empty($modData[$modification['modification_id']]['apply_count']) ?
-						$modData[$modification['modification_id']]['apply_count'] : 0;
-
-					if ($modification['active'] && ($modification['addon_active'] || $modification['addon_id'] == ''))
-					{
+					$modification['apply_count'] = !empty($modData[$modification['modification_id']]['apply_count']) ? $modData[$modification['modification_id']]['apply_count'] : 0;
+					if ($modification['active'] && ($modification['addon_active'] || $modification['addon_id'] == '')) {
 						$modification['class'] = !$modification['apply_count'] ? 'NotApplied' :
 							($modification['apply_count'] > 1 ? 'MultipleApplied' : 'OnceApplied');
 					}
@@ -71,7 +66,7 @@ class TMS_ControllerHelper_Modification extends XenForo_ControllerHelper_Abstrac
 	 *
 	 * @return TMS_Model_Modification
 	 */
-	protected function _getModificationModel()
+	protected function _getTmsModModel()
 	{
 		return $this->_controller->getModelFromCache('TMS_Model_Modification');
 	}

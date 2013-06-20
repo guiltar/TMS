@@ -35,7 +35,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 	 *
 	 * @return XenForo_ControllerResponse_Abstract
 	 */
-	public function actionTemplateModifications()
+	public function actionTmsMods()
 	{
 		$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
 		$style = $this->_getStyleModel()->getStyleById($styleId, true);
@@ -102,7 +102,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 
 		$style = $response->params['style'];
 
-		$modifications = $this->_getModificationModel()->getAllModificationsInStyle($style['style_id']);
+		$modifications = $this->_getTmsModModel()->getAllModificationsInStyle($style['style_id']);
 
 		if (empty($response->params['templates']) && empty($response->params['properties']) && empty($modifications))
 		{
@@ -149,7 +149,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 	 *
 	 * @return TMS_Model_Modification
 	 */
-	protected function _getModificationModel()
+	protected function _getTmsModModel()
 	{
 		return $this->getModelFromCache('TMS_Model_Modification');
 	}

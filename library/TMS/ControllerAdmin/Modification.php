@@ -22,7 +22,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 
 		return $this->responseRedirect(
 			XenForo_ControllerResponse_Redirect::RESOURCE_CANONICAL,
-			XenForo_Link::buildAdminLink('styles/template-modifications', $style)
+			XenForo_Link::buildAdminLink('styles/tms-mods', $style)
 		);
 	}
 
@@ -100,7 +100,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 		}
 
 		if ($input['style_id'] != $modification['style_id']) {
-			$specificModification = $this->_getModificationModel()->getModificationInStyleByTitle($modification['title'], $input['style_id']);
+			$specificModification = $this->_getTmsModModel()->getModificationInStyleByTitle($modification['title'], $input['style_id']);
 			if ($specificModification) {
 				$modification = $specificModification;
 			}
@@ -182,7 +182,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 			{
 				return $this->responseRedirect(
 					XenForo_ControllerResponse_Redirect::RESOURCE_UPDATED,
-					XenForo_Link::buildAdminLink('template-modifications/edit', $writer->getMergedData(), array('style_id' => $writer->get('style_id'))).'#diff'
+					XenForo_Link::buildAdminLink('tms-mods/edit', $writer->getMergedData(), array('style_id' => $writer->get('style_id'))).'#diff'
 				);
 			}
 			else
@@ -194,7 +194,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 
 		return $this->responseRedirect(
 			XenForo_ControllerResponse_Redirect::SUCCESS,
-			XenForo_Link::buildAdminLink('template-modifications', null, array('style_id' => $style['style_id'])) . $this->getLastHash($writer->get('title'))
+			XenForo_Link::buildAdminLink('tms-mods', null, array('style_id' => $style['style_id'])) . $this->getLastHash($writer->get('title'))
 		);
 	}
 
@@ -214,7 +214,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 
 			return $this->responseRedirect(
 				XenForo_ControllerResponse_Redirect::SUCCESS,
-				XenForo_Link::buildAdminLink('template-modifications', null, array('style_id' => $style['style_id']))
+				XenForo_Link::buildAdminLink('tms-mods', null, array('style_id' => $style['style_id']))
 			);
 		}
 		else // show a delete confirmation dialog
@@ -240,9 +240,9 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 		$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
 
 		return $this->_getToggleResponse(
-			$this->_getModificationModel()->getEffectiveModificationListForStyle($styleId),
+			$this->_getTmsModModel()->getEffectiveModificationListForStyle($styleId),
 			'TMS_DataWriter_Modification',
-			'template-modifications'
+			'tms-mods'
 		);
 	}
 
@@ -255,7 +255,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 	 */
 	protected function _getModificationOrError($id)
 	{
-		$info = $this->_getModificationModel()->getModificationById($id);
+		$info = $this->_getTmsModModel()->getModificationById($id);
 		if (!$info) {
 			throw $this->responseException($this->responseError(new XenForo_Phrase('tms_requested_modification_not_found'), 404));
 		}
@@ -268,7 +268,7 @@ class TMS_ControllerAdmin_Modification extends XenForo_ControllerAdmin_StyleAbst
 	 *
 	 * @return TMS_Model_Modification
 	 */
-	protected function _getModificationModel()
+	protected function _getTmsModModel()
 	{
 		return $this->getModelFromCache('TMS_Model_Modification');
 	}

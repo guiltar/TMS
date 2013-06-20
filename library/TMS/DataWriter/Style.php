@@ -12,8 +12,7 @@ class TMS_DataWriter_Style extends XFCP_TMS_DataWriter_Style
 	 */
 	protected function _postSave()
 	{
-		if ($this->isInsert())
-		{
+		if ($this->isInsert()) {
 			XenForo_Application::set('insertedStyleId', $this->get('style_id'));
 		}
 
