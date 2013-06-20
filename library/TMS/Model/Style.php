@@ -21,7 +21,7 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		if(!XenForo_Application::isRegistered('tmsIndependentExport'))
 		{
 			$rootNode = $document->documentElement;
-			$dataNode = $rootNode->appendChild($document->createElement('template_modifications'));
+			$dataNode = $rootNode->appendChild($document->createElement('tms_mods'));
 			$this->getModelFromCache('TMS_Model_Modification')->appendModificationsStyleXml($dataNode, $style['style_id']);
 		}
 
@@ -61,7 +61,7 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		}
 
 		if ($targetStyleId) {
-			$modificationModel->importModificationsStyleXml($document->template_modifications, $targetStyleId);
+			$modificationModel->importModificationsStyleXml($document->tms_mods, $targetStyleId);
 		}
 
 		XenForo_Db::commit($db);

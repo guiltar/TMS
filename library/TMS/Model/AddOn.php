@@ -19,7 +19,7 @@ class TMS_Model_AddOn extends XFCP_TMS_Model_AddOn
 	{
 		parent::importAddOnExtraDataFromXml($xml, $addOnId);
 
-		$this->getModelFromCache('TMS_Model_Modification')->importModificationsAddOnXml($xml->template_modifications, $addOnId);
+		$this->getModelFromCache('TMS_Model_Modification')->importModificationsAddOnXml($xml->tms_mods, $addOnId);
 	}
 
 	/**
@@ -35,7 +35,7 @@ class TMS_Model_AddOn extends XFCP_TMS_Model_AddOn
 		$rootNode = $document->documentElement;
 		$addOnId = $addOn['addon_id'];
 
-		$dataNode = $rootNode->appendChild($document->createElement('template_modifications'));
+		$dataNode = $rootNode->appendChild($document->createElement('tms_mods'));
 		$this->getModelFromCache('TMS_Model_Modification')->appendModificationsAddOnXml($dataNode, $addOnId);
 
 		return $document;

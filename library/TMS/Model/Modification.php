@@ -541,7 +541,7 @@ class TMS_Model_Modification extends XenForo_Model
 	{
 		$document = new DOMDocument('1.0', 'utf-8');
 		$document->formatOutput = true;
-		$rootNode = $document->createElement('template_modifications');
+		$rootNode = $document->createElement('tms_mods');
 		$document->appendChild($rootNode);
 
 		$this->appendTemplatesAddOnXml($rootNode, 'XenForo');
