@@ -7,35 +7,12 @@
  */
 class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 {
-	public function actionExport()
-	{
-		if ($this->_request->isPost())
-		{
-			if(!$this->_input->filterSingle('tms_dependent', XenForo_Input::UINT)){
-				XenForo_Application::set('tmsIndependentExport', 1);
-			}
-
-			return parent::actionExport();
-		}
-		else
-		{
-			$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
-			$style = $this->_getStyleOrError($styleId);
-
-			$viewParams = array(
-				'style' => $style,
-			);
-
-			return $this->responseView('TMS_ViewAdmin_Style_Export', 'tms_style_export', $viewParams);
-		}
-	}
-
 	/**
 	 * Displays the list of modifications in the specified style.
 	 *
 	 * @return XenForo_ControllerResponse_Abstract
 	 */
-	public function actionTmsMods()
+	public function actionTemplateModifications()
 	{
 		$styleId = $this->_input->filterSingle('style_id', XenForo_Input::UINT);
 		$style = $this->_getStyleModel()->getStyleById($styleId, true);
@@ -48,21 +25,26 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 		XenForo_Helper_Cookie::setCookie('edit_style_id', $styleId);
 
 		$styleModel = $this->_getStyleModel();
-		$templateModel = $this->_getTemplateModel();
 
-		/* @var $modHelper TMS_ControllerHelper_Modification */
-		$modHelper = $this->getHelper('TMS_ControllerHelper_Modification');
-		$viewParams = $modHelper->getModifications($styleId);
+		$modificationModel = $this->_getModificationModel();
 
-		$viewParams = $viewParams + array(
-			'styles' => $styleModel->getAllStylesAsFlattenedTree(1),
-			'masterStyle' => $styleModel->getStyleById(0, true),
+		$viewParams = array(
+			'groupedModifications' => $modificationModel->groupModificationsByAddon(
+				$modificationModel->getAllModificationsInStyle($styleId)
+			),
+			'logSummary' => $modificationModel->getModificationLogSummary(),
+			'addOns' => $this->_getAddOnModel()->getAllAddOns(),
+
+
+			'styles' => $styleModel->getAllStylesAsFlattenedTree($styleModel->showMasterStyle() ? 1 : 0),
+			'masterStyle' => $styleModel->showMasterStyle() ? $styleModel->getStyleById(0, true) : array(),
 			'style' => $style,
+
+			'canCreateModification' => XenForo_Application::debugMode()
 		);
 
-		return $this->responseView('TMS_ViewAdmin_TemplateModification_List', 'tms_modification_list', $viewParams);
+		return $this->responseView('XenForo_ViewAdmin_TemplateModification_List', 'template_modification_list', $viewParams);
 	}
-
 
 	/**
 	 * Lists all templates and style properties customized directly within the specified style
@@ -102,7 +84,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 
 		$style = $response->params['style'];
 
-		$modifications = $this->_getTmsModModel()->getAllModificationsInStyle($style['style_id']);
+		$modifications = $this->_getModificationModel()->getAllModificationsInStyle($style['style_id']);
 
 		if (empty($response->params['templates']) && empty($response->params['properties']) && empty($modifications))
 		{
@@ -129,7 +111,7 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 			{
 				foreach ($revertInfo['modifications'] AS $modificationId)
 				{
-					$dw = XenForo_DataWriter::create('TMS_DataWriter_Modification', XenForo_DataWriter::ERROR_SILENT);
+					$dw = XenForo_DataWriter::create('XenForo_DataWriter_TemplateModification', XenForo_DataWriter::ERROR_SILENT);
 					$dw->setExistingData($modificationId);
 					$dw->delete();
 				}
@@ -142,15 +124,5 @@ class TMS_ControllerAdmin_Style extends XFCP_TMS_ControllerAdmin_Style
 		}
 
 		return $response;
-	}
-
-	/**
-	 * Gets the modification model.
-	 *
-	 * @return TMS_Model_Modification
-	 */
-	protected function _getTmsModModel()
-	{
-		return $this->getModelFromCache('TMS_Model_Modification');
 	}
 }

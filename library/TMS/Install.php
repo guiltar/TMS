@@ -32,8 +32,8 @@ class TMS_Install
 
 	public static function build($existingAddOn, $addOnData)
 	{
-		if (XenForo_Application::$versionId < 1010270) {
-			throw new XenForo_Exception(new XenForo_Phrase('tms_requires_minimum_xenforo_version', array('version' => '1.1.2')));
+		if (XenForo_Application::$versionId < 1020070) {
+			throw new XenForo_Exception('This version of TMS requires XenForo 1.2 or higher.');
 		}
 
 		$startVersion = 1;
@@ -62,69 +62,69 @@ class TMS_Install
 		XenForo_Db::commit($db);
 	}
 
-	protected function _installVersion1()
+	protected function _installVersion4()
 	{
 		$db = $this->_getDb();
 
 		$db->query("
-            ALTER TABLE xf_template ADD template_modified MEDIUMTEXT NULL  COMMENT 'TMS' AFTER template ,
-            ADD template_modifications MEDIUMBLOB NULL COMMENT 'TMS' AFTER template_modified
-        ");
-
-		$db->query("
-            CREATE TABLE tms_modification (
-            modification_id int( 10 ) unsigned NOT NULL AUTO_INCREMENT ,
-            title varchar( 25 ) NOT NULL ,
-            style_id int( 10 ) unsigned NOT NULL default '0',
-            template_title varchar( 25 ) NOT NULL ,
-            execute_order int( 10 ) unsigned NOT NULL ,
-            description text NOT NULL ,
-            search_string MEDIUMTEXT NULL ,
-            replace_string MEDIUMTEXT NULL ,
-            addon_id varchar( 25 ) NOT NULL ,
-            version_id int( 10 ) unsigned NOT NULL default '0',
-            version_string varchar( 30 ) NOT NULL ,
-            active tinyint( 3 ) unsigned NOT NULL default '1',
-            PRIMARY KEY ( modification_id ) ,
-            UNIQUE KEY title ( title , style_id )
-            ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
+            ALTER TABLE xf_template_modification
+            ADD style_id int( 10 ) unsigned NOT NULL default '0'
         ");
 	}
 
-	protected function _installVersion2()
+	protected function _installVersion5()
 	{
 		$db = $this->_getDb();
 
-		$db->query("
-            ALTER TABLE tms_modification
-            CHANGE search_string search_value MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-            CHANGE replace_string replace_value MEDIUMTEXT CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-            CHANGE title title VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-            ADD modification_type VARCHAR( 20 ) NOT NULL DEFAULT 'str_replace' AFTER description ,
-            ADD callback_class VARCHAR( 75 ) NOT NULL DEFAULT '' AFTER modification_type ,
-            ADD callback_method VARCHAR( 50 ) NOT NULL DEFAULT '' AFTER callback_class
+		/* @var $modificationModel TMS_Model_TemplateModification */
+		$modificationModel = XenForo_Model::create('XenForo_Model_TemplateModification');
+
+		$tmsMods = $db->fetchAll("
+			SELECT *
+			FROM tms_modification
         ");
 
-		$db->query("
-            ALTER TABLE xf_template
-            DROP template_modified,
-            DROP template_modifications
-        ");
+		foreach($tmsMods as $tmsMod)
+		{
+			$mod = $modificationModel->getModificationByKey('tms_'.$tmsMod['title']);
+			$modificationId = !empty($mod['modification_id']) ? $mod['modification_id'] : null;
+
+			$dwData = array(
+				'template' => $tmsMod['template_title'],
+				'modification_key' => 'tms_'.$tmsMod['title'],
+				'description' => $tmsMod['description'],
+				'action' => $tmsMod['modification_type'],
+				'find' => ($tmsMod['modification_type'] == 'callback') ? '#^.*$#si' : $tmsMod['search_value'],
+				'replace' => ($tmsMod['modification_type'] == 'callback') ? $tmsMod['callback_class'].'::'.$tmsMod['callback_method'] : $tmsMod['replace_value'],
+				'execution_order' => $tmsMod['execute_order'],
+				'enabled' => $tmsMod['active'],
+				'addon_id' => $tmsMod['addon_id'],
+				'style_id' => $tmsMod['style_id'],
+			);
+
+
+			/* @var $dw XenForo_DataWriter_TemplateModification */
+			$dw = XenForo_DataWriter::create('XenForo_DataWriter_TemplateModification', XenForo_DataWriter::ERROR_SILENT);
+			if ($modificationId)
+			{
+				$dw->setExistingData($modificationId);
+				$dw->bulkSet($dwData);
+			}
+			else
+			{
+				$dw->bulkSet($dwData);
+			}
+
+			$dw->save();
+		}
 
 		$db->query("
-           ALTER TABLE xf_template_map ADD template_final MEDIUMTEXT NULL  COMMENT 'TMS',
-           ADD template_modifications MEDIUMBLOB NULL COMMENT 'TMS' AFTER template_final
-        ");
-	}
+			ALTER TABLE xf_template_map
+			DROP template_final,
+			DROP template_modifications
+		");
 
-	protected function _installVersion3()
-	{
-		$db = $this->_getDb();
-
-		$db->query("
-            ALTER TABLE tms_modification
-            CHANGE template_title template_title VARCHAR( 75 ) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL
-        ");
+		//$db->query("DROP TABLE tms_modification");
 	}
 
 	public static function destroy()
@@ -154,12 +154,11 @@ class TMS_Install
 	{
 		$db = $this->_getDb();
 
-		$db->query("
-		    ALTER TABLE xf_template_map
-		    DROP template_final,
-		    DROP template_modifications
-        ");
+		$db->delete('xf_template_modification', 'style_id > 0');
 
-		$db->query("DROP TABLE tms_modification");
+		$db->query("
+		    ALTER TABLE xf_template_modification
+		    DROP style_id
+        ");
 	}
 }

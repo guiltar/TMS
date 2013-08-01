@@ -21,8 +21,8 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		if(!XenForo_Application::isRegistered('tmsIndependentExport'))
 		{
 			$rootNode = $document->documentElement;
-			$dataNode = $rootNode->appendChild($document->createElement('tms_mods'));
-			$this->getModelFromCache('TMS_Model_Modification')->appendModificationsStyleXml($dataNode, $style['style_id']);
+			$dataNode = $rootNode->appendChild($document->createElement('public_template_modifications'));
+			$this->_getModificationModel()->appendModificationStyleXml($dataNode, $style['style_id']);
 		}
 
 		return $document;
@@ -44,11 +44,9 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 
 		$return = parent::importStyleXml($document, $parentStyleId, $overwriteStyleId);
 
-		/* @var $modificationModel TMS_Model_Modification */
-		$modificationModel = $this->getModelFromCache('TMS_Model_Modification');
-
-		if ($overwriteStyleId) {
-			$modificationModel->deleteModificationsInStyle($overwriteStyleId);
+		if ($overwriteStyleId)
+		{
+			$this->_getModificationModel()->deleteModificationsInStyle($overwriteStyleId);
 			$targetStyleId = $overwriteStyleId;
 		}
 		elseif (XenForo_Application::isRegistered('insertedStyleId'))
@@ -60,8 +58,9 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 			$targetStyleId = 0;
 		}
 
-		if ($targetStyleId) {
-			$modificationModel->importModificationsStyleXml($document->tms_mods, $targetStyleId);
+		if($targetStyleId)
+		{
+			$this->_getModificationModel()->importModificationStyleXml($document->public_template_modifications, $targetStyleId);
 		}
 
 		XenForo_Db::commit($db);
@@ -70,12 +69,10 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 	}
 
 	/**
-	 * Gets the modification model object.
-	 *
-	 * @return TMS_Model_Modification
+	 * @return XenForo_Model_TemplateModification
 	 */
-	protected function _getTmsModModel()
+	protected function _getModificationModel()
 	{
-		return $this->getModelFromCache('TMS_Model_Modification');
+		return $this->getModelFromCache('XenForo_Model_TemplateModification');
 	}
 }

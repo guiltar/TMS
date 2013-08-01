@@ -12,9 +12,8 @@ class TMS_DataWriter_Style extends XFCP_TMS_DataWriter_Style
 	 */
 	protected function _postSave()
 	{
-		if ($this->isInsert()) {
+		if($this->isInsert())
 			XenForo_Application::set('insertedStyleId', $this->get('style_id'));
-		}
 
 		parent::_postSave();
 	}
@@ -24,9 +23,7 @@ class TMS_DataWriter_Style extends XFCP_TMS_DataWriter_Style
 	 */
 	protected function _postDelete()
 	{
-		$db = $this->_db;
-		$styleId = $this->get('style_id');
-		$db->delete('tms_modification', 'style_id = ' . $db->quote($styleId));
+		$this->_db->delete('xf_template_modification', 'style_id = ' . $this->_db->quote($this->get('style_id')));
 
 		parent::_postDelete();
 	}
