@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<addon addon_id="TMS" title="Template Modification System" version_string="1.3 Beta 2" version_id="5" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Install" install_callback_method="build" uninstall_callback_class="TMS_Install" uninstall_callback_method="destroy">
+<addon addon_id="TMS" title="Template Modification System" version_string="1.3 Beta 3" version_id="5" url="http://xenforo.com/community/resources/template-modification-system-tms.293/" install_callback_class="TMS_Install" install_callback_method="build" uninstall_callback_class="TMS_Install" uninstall_callback_method="destroy">
   <admin_navigation/>
   <admin_permissions/>
   <admin_style_properties/>
@@ -55,7 +55,7 @@
     <modification template="base_template_modification_list" modification_key="rebuild_link" description="rebuild link" execution_order="10" enabled="1" action="str_replace">
       <find><![CDATA[</xen:topctrl>]]></find>
       <replace><![CDATA[<xen:if is="{$prefix}=='template-modifications'">
- <xen:form action="{xen:adminlink 'tools/cache-rebuild'}" style="display: inline;">
+ <xen:form action="{xen:adminlink 'tools/trigger-deferred'}" style="display: inline;">
      <input class="button primary" type="submit" accesskey="s" value="{xen:phrase tms_rebuild_templates}">
      <input type="hidden" name="cache" value="Template" />
 </xen:form>
