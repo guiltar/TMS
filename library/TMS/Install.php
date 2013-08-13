@@ -66,63 +66,70 @@ class TMS_Install
 	{
 		$db = $this->_getDb();
 
-		$db->query("
-            ALTER TABLE xf_template_modification
-            ADD style_id int( 10 ) unsigned NOT NULL default '0'
-        ");
+		if(!$db->fetchRow('SHOW COLUMNS FROM xf_template_modification WHERE Field = ?', 'style_id'))
+		{
+			$db->query("
+	            ALTER TABLE xf_template_modification
+	            ADD style_id int( 10 ) unsigned NOT NULL default '0'
+	        ");
+		}
 	}
 
 	protected function _installVersion5()
 	{
 		$db = $this->_getDb();
 
-		/* @var $modificationModel TMS_Model_TemplateModification */
-		$modificationModel = XenForo_Model::create('XenForo_Model_TemplateModification');
-
-		$tmsMods = $db->fetchAll("
-			SELECT *
-			FROM tms_modification
-        ");
-
-		foreach($tmsMods as $tmsMod)
+		if($db->query("SHOW TABLES LIKE 'tms_modification'")->rowCount() > 0)
 		{
-			$mod = $modificationModel->getModificationByKey('tms_'.$tmsMod['title']);
-			$modificationId = !empty($mod['modification_id']) ? $mod['modification_id'] : null;
+			/* @var $modificationModel TMS_Model_TemplateModification */
+			$modificationModel = XenForo_Model::create('XenForo_Model_TemplateModification');
 
-			$dwData = array(
-				'template' => $tmsMod['template_title'],
-				'modification_key' => 'tms_'.$tmsMod['title'],
-				'description' => $tmsMod['description'],
-				'action' => $tmsMod['modification_type'],
-				'find' => ($tmsMod['modification_type'] == 'callback') ? '#^.*$#si' : $tmsMod['search_value'],
-				'replace' => ($tmsMod['modification_type'] == 'callback') ? $tmsMod['callback_class'].'::'.$tmsMod['callback_method'] : $tmsMod['replace_value'],
-				'execution_order' => $tmsMod['execute_order'],
-				'enabled' => $tmsMod['active'],
-				'addon_id' => $tmsMod['addon_id'],
-				'style_id' => $tmsMod['style_id'],
-			);
+			$tmsMods = $db->fetchAll("
+				SELECT *
+				FROM tms_modification
+	        ");
 
-
-			/* @var $dw XenForo_DataWriter_TemplateModification */
-			$dw = XenForo_DataWriter::create('XenForo_DataWriter_TemplateModification', XenForo_DataWriter::ERROR_SILENT);
-			if ($modificationId)
+			foreach($tmsMods as $tmsMod)
 			{
-				$dw->setExistingData($modificationId);
-				$dw->bulkSet($dwData);
-			}
-			else
-			{
-				$dw->bulkSet($dwData);
-			}
+				$mod = $modificationModel->getModificationByKey('tms_'.$tmsMod['title']);
+				$modificationId = !empty($mod['modification_id']) ? $mod['modification_id'] : null;
 
-			$dw->save();
+				$dwData = array(
+					'template' => $tmsMod['template_title'],
+					'modification_key' => 'tms_'.$tmsMod['title'],
+					'description' => $tmsMod['description'],
+					'action' => $tmsMod['modification_type'],
+					'find' => ($tmsMod['modification_type'] == 'callback') ? '#^.*$#si' : $tmsMod['search_value'],
+					'replace' => ($tmsMod['modification_type'] == 'callback') ? $tmsMod['callback_class'].'::'.$tmsMod['callback_method'] : $tmsMod['replace_value'],
+					'execution_order' => $tmsMod['execute_order'],
+					'enabled' => $tmsMod['active'],
+					'addon_id' => $tmsMod['addon_id'],
+					'style_id' => $tmsMod['style_id'],
+				);
+
+
+				/* @var $dw XenForo_DataWriter_TemplateModification */
+				$dw = XenForo_DataWriter::create('XenForo_DataWriter_TemplateModification', XenForo_DataWriter::ERROR_SILENT);
+				if ($modificationId)
+				{
+					$dw->setExistingData($modificationId);
+					$dw->bulkSet($dwData);
+				}
+				else
+				{
+					$dw->bulkSet($dwData);
+				}
+
+				$dw->save();
+			}
 		}
 
-		$db->query("
-			ALTER TABLE xf_template_map
-			DROP template_final,
-			DROP template_modifications
-		");
+
+		if($db->fetchRow('SHOW COLUMNS FROM xf_template_map WHERE Field = ?', 'template_final'))
+			$db->query("ALTER TABLE xf_template_map DROP template_final");
+
+		if($db->fetchRow('SHOW COLUMNS FROM xf_template_map WHERE Field = ?', 'template_modifications'))
+			$db->query("ALTER TABLE xf_template_map DROP template_modifications");
 
 		//$db->query("DROP TABLE tms_modification");
 	}
@@ -154,11 +161,14 @@ class TMS_Install
 	{
 		$db = $this->_getDb();
 
-		$db->delete('xf_template_modification', 'style_id > 0');
+		if($db->fetchRow('SHOW COLUMNS FROM xf_template_modification WHERE Field = ?', 'style_id'))
+		{
+			$db->delete('xf_template_modification', 'style_id > 0');
 
-		$db->query("
-		    ALTER TABLE xf_template_modification
-		    DROP style_id
-        ");
+			$db->query("
+			    ALTER TABLE xf_template_modification
+			    DROP style_id
+	        ");
+		}
 	}
 }

@@ -42,11 +42,11 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		$db = $this->_getDb();
 		XenForo_Db::beginTransaction($db);
 
-		$return = parent::importStyleXml($document, $parentStyleId, $overwriteStyleId);
+		parent::importStyleXml($document, $parentStyleId, $overwriteStyleId);
 
 		if ($overwriteStyleId)
 		{
-			$this->_getModificationModel()->deleteModificationsInStyle($overwriteStyleId);
+			$this->_getModificationModel()->deleteModificationsForStyle($overwriteStyleId);
 			$targetStyleId = $overwriteStyleId;
 		}
 		elseif (XenForo_Application::isRegistered('insertedStyleId'))
@@ -64,8 +64,6 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		}
 
 		XenForo_Db::commit($db);
-
-		return $return;
 	}
 
 	/**
