@@ -21,23 +21,18 @@ class TMS_DataWriter_TemplateModification extends XFCP_TMS_DataWriter_TemplateMo
 	 */
 	protected function _postSave()
 	{
-		$existingMaster = $this->_getTemplateModel()->getTemplateInStyleByTitle($this->get('template'));
+		$template = $this->_getTemplateModel()->getTemplateInStyleByTitle($this->get('template'));
 		$existingEffective = $this->_getTemplateModel()->getEffectiveTemplateByTitle($this->get('template'), $this->get('style_id'));
 
-		if($existingEffective['map_style_id'] != $existingEffective['style_id'])
+		if(!$template && $existingEffective)
 		{
 			$writer = XenForo_DataWriter::create('XenForo_DataWriter_Template');
 
-			if($existingEffective)
-			{
-				// only change the style ID of a newly inserted template
-				$writer->set('style_id', $this->get('style_id'));
-				$writer->set('addon_id', $existingEffective['addon_id']);
-				$writer->set('title', $existingEffective['title']);
-				$writer->set('template', "<xen:comment>tms</xen:comment>\n" . $existingEffective['template']);
-			}
+			$writer->set('style_id', $this->get('style_id'));
+			$writer->set('addon_id', $existingEffective['addon_id']);
+			$writer->set('title', $existingEffective['title']);
+			$writer->set('template', "<xen:comment>tms</xen:comment>\n" . $existingEffective['template']);
 
-			$writer->preSave();
 			$writer->save();
 		}
 

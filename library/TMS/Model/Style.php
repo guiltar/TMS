@@ -61,6 +61,11 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		if($targetStyleId)
 		{
 			$this->_getModificationModel()->importModificationStyleXml($document->public_template_modifications, $targetStyleId);
+
+			XenForo_Application::defer('Atomic',
+				array('simple' => array('TemplateReparse', 'Template')),
+				'templateRebuild', true
+			);
 		}
 
 		XenForo_Db::commit($db);
