@@ -14,7 +14,7 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 	 *
 	 * @return DOMDocument
 	 */
-	public function getStyleXml(array $style)
+	public function getStyleXml(array $style, $limitAddOnId = null, $independent = false)
 	{
 		$document = parent::getStyleXml($style);
 
@@ -22,7 +22,9 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 		{
 			$rootNode = $document->documentElement;
 			$dataNode = $rootNode->appendChild($document->createElement('public_template_modifications'));
-			$this->_getModificationModel()->appendModificationStyleXml($dataNode, $style['style_id']);
+			$this->_getModificationModel()->appendModificationStyleXml(
+                $dataNode, $style['style_id'], $limitAddOnId, $independent
+            );
 		}
 
 		return $document;
@@ -72,7 +74,7 @@ class TMS_Model_Style extends XFCP_TMS_Model_Style
 	}
 
 	/**
-	 * @return XenForo_Model_TemplateModification
+	 * @return TMS_Model_TemplateModification
 	 */
 	protected function _getModificationModel()
 	{

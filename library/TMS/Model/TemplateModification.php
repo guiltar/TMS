@@ -145,7 +145,7 @@ class TMS_Model_TemplateModification extends XFCP_TMS_Model_TemplateModification
 	 * @param DOMElement $rootNode Node to append all prefix elements to
 	 * @param string $styleId Add-on ID to be exported
 	 */
-	public function appendModificationStyleXml(DOMElement $rootNode, $styleId)
+	public function appendModificationStyleXml(DOMElement $rootNode, $styleId, $limitAddOnId = null, $independent = false)
 	{
 		$modifications = $this->getModificationsByStyleId($styleId);
 
@@ -153,6 +153,18 @@ class TMS_Model_TemplateModification extends XFCP_TMS_Model_TemplateModification
 
 		foreach ($modifications AS $modification)
 		{
+            if ($limitAddOnId !== null && $modification['addon_id'] !== $limitAddOnId)
+            {
+                // wrong add-on
+                continue;
+            }
+
+            if ($independent && !$modification['style_id'])
+            {
+                // master version of a template
+                continue;
+            }
+
 			$modNode = $document->createElement('modification');
 			$modNode->setAttribute('template', $modification['template']);
 			$modNode->setAttribute('modification_key', $modification['modification_key']);
