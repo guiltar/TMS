@@ -21,7 +21,7 @@ class TMS_DataWriter_TemplateModification extends XFCP_TMS_DataWriter_TemplateMo
 	 */
 	protected function _postSave()
 	{
-		$template = $this->_getTemplateModel()->getTemplateInStyleByTitle($this->get('template'));
+		$template = $this->_getTemplateModel()->getTemplateInStyleByTitle($this->get('template'), $this->get('style_id'));
 		$existingEffective = $this->_getTemplateModel()->getEffectiveTemplateByTitle($this->get('template'), $this->get('style_id'));
 
 		if(!$template && $existingEffective)
